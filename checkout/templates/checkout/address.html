@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Address · tac-ecommerce{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Delivery Address</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="px-4 py-2 bg-black text-white rounded">Continue</button>
+</form>
+{% endblock %}

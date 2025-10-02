@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Home · tac-ecommerce{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-semibold mb-4">Welcome to tac-ecommerce</h1>
+  <p class="mb-6">Browse our latest products.</p>
+  <a href="{% url 'catalog:product_list' %}" class="px-4 py-2 bg-black text-white rounded">Shop now</a>
+{% endblock %}

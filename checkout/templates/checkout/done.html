@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Order Complete · tac-ecommerce{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Order Complete</h1>
+<p class="mb-4">Thank you for your order! We'll process it shortly.</p>
+<a href="{% url 'catalog:product_list' %}" class="px-4 py-2 bg-black text-white rounded">Continue Shopping</a>
+{% endblock %}

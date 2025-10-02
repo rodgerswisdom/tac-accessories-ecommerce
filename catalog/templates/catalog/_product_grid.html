@@ -1,0 +1,14 @@
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+  {% for p in products %}
+    <a href="{% url 'catalog:product_detail' p.slug %}" class="block border rounded p-3 bg-white hover:shadow">
+      <div class="aspect-square bg-gray-100 mb-2 rounded"></div>
+      <div class="font-medium">{{ p.name }}</div>
+      <div class="text-sm text-gray-600">{{ p.price_display }}</div>
+      {% if not p.in_stock %}
+        <div class="text-xs mt-1 text-red-600 font-medium">Out of stock</div>
+      {% endif %}
+    </a>
+  {% empty %}
+    <p class="col-span-full text-gray-600">No products found.</p>
+  {% endfor %}
+</div>

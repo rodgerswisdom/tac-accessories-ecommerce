@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} · tac-ecommerce{% endblock %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="aspect-square bg-gray-100 rounded"></div>
+  <div>
+    <h1 class="text-2xl font-semibold">{{ product.name }}</h1>
+    <div class="text-lg my-2">{{ product.price_display }}</div>
+    {% if product.in_stock %}
+      <form method="post" action="{% url 'cart:add' product.slug %}">
+        {% csrf_token %}
+        <button class="px-4 py-2 bg-black text-white rounded">Add to cart</button>
+      </form>
+    {% else %}
+      <div class="text-red-600 font-medium">Out of stock</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

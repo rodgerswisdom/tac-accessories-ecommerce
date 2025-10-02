@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Sign Up · tac-ecommerce{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Sign Up</h1>
+<form method="post">
+  {% csrf_token %}
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium mb-1">Username</label>
+      <input type="text" name="username" class="w-full border rounded px-3 py-2" required>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Password</label>
+      <input type="password" name="password" class="w-full border rounded px-3 py-2" required>
+    </div>
+    <button type="submit" class="px-4 py-2 bg-black text-white rounded">Sign Up</button>
+  </div>
+</form>
+<p class="mt-4 text-sm">
+  Already have an account? <a href="{% url 'accounts:login' %}" class="text-blue-600 hover:underline">Login</a>
+</p>
+{% endblock %}

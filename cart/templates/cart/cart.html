@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Cart · tac-ecommerce{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Your Cart</h1>
+{% if items %}
+  <table class="bg-white rounded">
+    <thead><tr><th>Product</th><th>Qty</th><th>Subtotal (KES)</th><th></th></tr></thead>
+    <tbody>
+      {% for it in items %}
+      <tr>
+        <td>{{ it.product.name }}</td>
+        <td>{{ it.qty }}</td>
+        <td>{{ it.subtotal|floatformat:2 }}</td>
+        <td><a class="text-red-600" href="{% url 'cart:remove' it.product.slug %}">Remove</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="mt-4 font-semibold">Total: KES {{ total|floatformat:2 }}</div>
+  <a class="mt-4 inline-block px-4 py-2 bg-black text-white rounded" href="{% url 'checkout:address' %}">Checkout</a>
+{% else %}
+  <p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}

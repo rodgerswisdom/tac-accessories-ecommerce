@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Confirm Order · tac-ecommerce{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Confirm Order</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div>
+    <h2 class="font-semibold mb-2">Delivery Address</h2>
+    <div class="bg-gray-50 p-4 rounded">
+      <p>{{ address.full_name }}</p>
+      <p>{{ address.phone }}</p>
+      <p>{{ address.line1 }}</p>
+      {% if address.line2 %}<p>{{ address.line2 }}</p>{% endif %}
+      <p>{{ address.city }}</p>
+      {% if address.notes %}<p class="mt-2 text-sm">{{ address.notes }}</p>{% endif %}
+    </div>
+  </div>
+  <div>
+    <h2 class="font-semibold mb-2">Order Summary</h2>
+    <div class="space-y-2">
+      {% for line in lines %}
+      <div class="flex justify-between">
+        <span>{{ line.p.name }} x{{ line.qty }}</span>
+        <span>KES {{ line.subtotal|floatformat:2 }}</span>
+      </div>
+      {% endfor %}
+      <div class="border-t pt-2 font-semibold flex justify-between">
+        <span>Total:</span>
+        <span>KES {{ total|floatformat:2 }}</span>
+      </div>
+    </div>
+    <form method="post" class="mt-4">
+      {% csrf_token %}
+      <button type="submit" class="w-full px-4 py-2 bg-black text-white rounded">Place Order (COD)</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
