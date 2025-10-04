@@ -1,37 +1,167 @@
 {% extends "base.html" %}
-{% block title %}Confirm Order · tac-ecommerce{% endblock %}
+
+{% block title %}Confirm Order - TAC Jewellery{% endblock %}
+
 {% block content %}
-<h1 class="text-xl font-semibold mb-4">Confirm Order</h1>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div>
-    <h2 class="font-semibold mb-2">Delivery Address</h2>
-    <div class="bg-gray-50 p-4 rounded">
-      <p>{{ address.full_name }}</p>
-      <p>{{ address.phone }}</p>
-      <p>{{ address.line1 }}</p>
-      {% if address.line2 %}<p>{{ address.line2 }}</p>{% endif %}
-      <p>{{ address.city }}</p>
-      {% if address.notes %}<p class="mt-2 text-sm">{{ address.notes }}</p>{% endif %}
-    </div>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-serif font-bold text-gray-900 mb-4">Confirm Your Order</h1>
+    <p class="text-xl text-gray-600">Review your order details before placing it</p>
   </div>
-  <div>
-    <h2 class="font-semibold mb-2">Order Summary</h2>
-    <div class="space-y-2">
-      {% for line in lines %}
-      <div class="flex justify-between">
-        <span>{{ line.p.name }} x{{ line.qty }}</span>
-        <span>KES {{ line.subtotal|floatformat:2 }}</span>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Order Details -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Delivery Address -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 bg-gold-100 rounded-full flex items-center justify-center mr-3">
+            <i class="fas fa-map-marker-alt text-gold-600"></i>
+          </div>
+          <h2 class="text-xl font-serif font-bold text-gray-900">Delivery Address</h2>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="space-y-2">
+            <p class="font-medium text-gray-900">{{ address.full_name }}</p>
+            <p class="text-gray-600"><i class="fas fa-phone mr-2"></i>{{ address.phone }}</p>
+            <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2"></i>{{ address.line1 }}</p>
+            {% if address.line2 %}
+              <p class="text-gray-600 ml-6">{{ address.line2 }}</p>
+            {% endif %}
+            <p class="text-gray-600"><i class="fas fa-city mr-2"></i>{{ address.city }}, {{ address.county }}</p>
+            {% if address.postal_code %}
+              <p class="text-gray-600"><i class="fas fa-mail-bulk mr-2"></i>{{ address.postal_code }}</p>
+            {% endif %}
+            <p class="text-gray-600"><i class="fas fa-flag mr-2"></i>{{ address.country }}</p>
+            {% if address.notes %}
+              <div class="mt-3 pt-3 border-t border-gray-200">
+                <p class="text-sm text-gray-500"><i class="fas fa-sticky-note mr-2"></i>Delivery Notes:</p>
+                <p class="text-sm text-gray-600 mt-1">{{ address.notes }}</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
-      {% endfor %}
-      <div class="border-t pt-2 font-semibold flex justify-between">
-        <span>Total:</span>
-        <span>KES {{ total|floatformat:2 }}</span>
+
+      <!-- Order Items -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 bg-gold-100 rounded-full flex items-center justify-center mr-3">
+            <i class="fas fa-shopping-bag text-gold-600"></i>
+          </div>
+          <h2 class="text-xl font-serif font-bold text-gray-900">Order Items</h2>
+        </div>
+        
+        <div class="space-y-4">
+          {% for line in lines %}
+          <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+            <div class="w-16 h-16 bg-gradient-to-br from-gold-100 to-gold-200 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-gem text-gold-400 text-xl"></i>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <h3 class="font-serif font-semibold text-gray-900 mb-1">{{ line.p.name }}</h3>
+              <p class="text-sm text-gray-600 mb-2">{{ line.p.short_description }}</p>
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-gem mr-1"></i>{{ line.p.get_material_display }}</span>
+                {% if line.p.carat %}
+                  <span>{{ line.p.carat }}</span>
+                {% endif %}
+                <span>SKU: {{ line.p.sku }}</span>
+              </div>
+            </div>
+            
+            <div class="text-right">
+              <p class="text-sm text-gray-500">Quantity: {{ line.qty }}</p>
+              <p class="text-lg font-bold text-gold-600">KES {{ line.subtotal|floatformat:2 }}</p>
+              <p class="text-sm text-gray-500">KES {{ line.p.price_display|slice:"4:" }} each</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 bg-gold-100 rounded-full flex items-center justify-center mr-3">
+            <i class="fas fa-credit-card text-gold-600"></i>
+          </div>
+          <h2 class="text-xl font-serif font-bold text-gray-900">Payment Method</h2>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center">
+              <i class="fas fa-money-bill-wave text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Cash on Delivery (COD)</h3>
+              <p class="text-sm text-gray-600">Pay when your order arrives</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <form method="post" class="mt-4">
-      {% csrf_token %}
-      <button type="submit" class="w-full px-4 py-2 bg-black text-white rounded">Place Order (COD)</button>
-    </form>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
+        <h2 class="text-xl font-serif font-bold text-gray-900 mb-6">Order Summary</h2>
+        
+        <div class="space-y-4">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Subtotal</span>
+            <span class="font-medium">KES {{ total|floatformat:2 }}</span>
+          </div>
+          
+          <div class="flex justify-between">
+            <span class="text-gray-600">Shipping</span>
+            <span class="font-medium text-green-600">Free</span>
+          </div>
+          
+          <div class="flex justify-between">
+            <span class="text-gray-600">Tax</span>
+            <span class="font-medium">KES 0.00</span>
+          </div>
+          
+          <div class="border-t border-gray-200 pt-4">
+            <div class="flex justify-between">
+              <span class="text-lg font-semibold text-gray-900">Total</span>
+              <span class="text-xl font-bold text-gold-600">KES {{ total|floatformat:2 }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Place Order Button -->
+        <form method="post" class="mt-6">
+          {% csrf_token %}
+          <button type="submit" 
+                  class="w-full gradient-gold text-white py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-lg">
+            <i class="fas fa-check-circle mr-2"></i>
+            Place Order
+          </button>
+        </form>
+        
+        <!-- Security Notice -->
+        <div class="mt-4 p-3 bg-green-50 rounded-lg">
+          <div class="flex items-center">
+            <i class="fas fa-shield-alt text-green-600 mr-2"></i>
+            <span class="text-sm text-green-700">Secure order processing</span>
+          </div>
+        </div>
+        
+        <!-- Delivery Info -->
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+          <div class="flex items-center">
+            <i class="fas fa-truck text-blue-600 mr-2"></i>
+            <span class="text-sm text-blue-700">Free delivery within 3-5 business days</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

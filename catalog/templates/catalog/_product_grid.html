@@ -1,14 +1,130 @@
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
   {% for p in products %}
-    <a href="{% url 'catalog:product_detail' p.slug %}" class="block border rounded p-3 bg-white hover:shadow">
-      <div class="aspect-square bg-gray-100 mb-2 rounded"></div>
-      <div class="font-medium">{{ p.name }}</div>
-      <div class="text-sm text-gray-600">{{ p.price_display }}</div>
-      {% if not p.in_stock %}
-        <div class="text-xs mt-1 text-red-600 font-medium">Out of stock</div>
-      {% endif %}
-    </a>
+    <div class="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden cursor-pointer hover:ring-2 hover:ring-gold-200 hover:ring-opacity-50" 
+         data-view-details 
+         data-product-id="{{ p.id }}"
+         data-product-name="{{ p.name }}"
+         data-product-description="{{ p.description }}"
+         data-product-short-description="{{ p.short_description }}"
+         data-product-price="{{ p.price_display }}"
+         data-product-price-cents="{{ p.price_cents }}"
+         data-product-compare-price="{{ p.compare_price_display }}"
+         data-product-material="{{ p.get_material_display }}"
+         data-product-carat="{{ p.carat }}"
+         data-product-stone-type="{{ p.stone_type }}"
+         data-product-stone-count="{{ p.stone_count }}"
+         data-product-size="{{ p.size }}"
+         data-product-category="{{ p.category.name }}"
+         data-product-sku="{{ p.sku }}">
+      <!-- Product Image -->
+      <div class="relative aspect-square overflow-hidden">
+        {% if p.image %}
+          <img src="{{ p.image.url }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        {% else %}
+          <div class="w-full h-full bg-gradient-to-br from-gold-100 to-gold-200 flex items-center justify-center">
+            {% hgi_stroke name="diamond-02" size="32" color="#d97706" stroke_width="2" %}
+          </div>
+        {% endif %}
+        
+        <!-- Modern Glassy Badges (Top Left) -->
+        <div class="absolute top-3 left-3 flex flex-col gap-2">
+          {% if p.is_new %}
+            <span class="glass-badge glass-badge-green">
+              {% hgi_stroke name="star" size="12" color="#ffffff" stroke_width="2" %}
+              <span class="ml-1">New</span>
+            </span>
+          {% endif %}
+          {% if p.is_featured %}
+            <span class="glass-badge glass-badge-gold">
+              {% hgi_stroke name="star" size="12" color="#ffffff" stroke_width="2" %}
+              <span class="ml-1">Featured</span>
+            </span>
+          {% endif %}
+          {% if p.is_bestseller %}
+            <span class="glass-badge glass-badge-red">
+              {% hgi_stroke name="award-05" size="12" color="#ffffff" stroke_width="2" %}
+              <span class="ml-1">Bestseller</span>
+            </span>
+          {% endif %}
+        </div>
+        
+        <!-- Modern Glassy Discount Badge (Top Right) -->
+        {% if p.compare_price_cents and p.compare_price_cents > p.price_cents %}
+          <div class="absolute top-3 right-3">
+            <span class="glass-badge glass-badge-discount">
+              -{{ p.discount_percentage }}%
+            </span>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Product Info -->
+      <div class="p-3 sm:p-4 flex flex-col h-full">
+        <!-- Category -->
+        <div class="text-xs text-gold-600 font-medium mb-1 truncate">
+          {{ p.category.name }}
+        </div>
+        
+        <!-- Product Name -->
+        <h3 class="font-serif font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-gold-600 transition-colors duration-200 text-sm sm:text-base flex-shrink-0">
+          {{ p.name }}
+        </h3>
+        
+        <!-- Material & Details -->
+        <div class="flex items-center gap-1 mb-3 flex-wrap">
+          <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full truncate">
+            {{ p.get_material_display }}
+          </span>
+          {% if p.carat %}
+            <span class="text-xs bg-gold-100 text-gold-700 px-2 py-1 rounded-full">
+              {{ p.carat }}
+            </span>
+          {% endif %}
+        </div>
+        
+        <!-- Price -->
+        <div class="flex flex-col mb-3 flex-shrink-0">
+          {% if p.compare_price_cents and p.compare_price_cents > p.price_cents %}
+            <!-- Original Price (Above) -->
+            <div class="text-sm text-gray-500 line-through mb-1">
+              {{ p.compare_price_display }}
+            </div>
+            <!-- Discounted Price (Below) -->
+            <div class="text-lg font-bold text-gray-900">
+              {{ p.price_display }}
+            </div>
+          {% else %}
+            <!-- Regular Price -->
+            <div class="text-lg font-bold text-gray-900">
+              {{ p.price_display }}
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- Stock Status -->
+        <div class="flex items-center justify-center mt-auto">
+          {% if p.in_stock %}
+            <span class="text-xs text-green-600 font-medium">
+              In Stock
+            </span>
+          {% else %}
+            <span class="text-xs text-red-600 font-medium">
+              Out of Stock
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   {% empty %}
-    <p class="col-span-full text-gray-600">No products found.</p>
+    <div class="col-span-full text-center py-12">
+      <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        {% hgi_stroke name="search-01" size="24" color="#9ca3af" stroke_width="2" %}
+      </div>
+      <h3 class="text-xl font-serif font-semibold text-gray-900 mb-2">No products found</h3>
+      <p class="text-gray-600 mb-6">Try adjusting your search or filter criteria</p>
+      <a href="{% url 'catalog:product_list' %}" class="gradient-gold text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+        View All Products
+      </a>
+    </div>
   {% endfor %}
 </div>

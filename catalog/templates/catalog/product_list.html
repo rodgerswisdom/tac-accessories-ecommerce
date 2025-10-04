@@ -1,30 +1,326 @@
 {% extends "base.html" %}
-{% block title %}Shop · tac-ecommerce{% endblock %}
-{% block content %}
-<div class="flex gap-6">
-  <aside class="w-64 hidden md:block">
-    <h2 class="font-semibold mb-2">Categories</h2>
-    <ul class="space-y-1">
-      <li><a class="hover:underline" href="{% url 'catalog:product_list' %}">All</a></li>
-      {% for c in categories %}
-        <li><a class="hover:underline" href="{% url 'catalog:category' c.slug %}">{{ c.name }}</a></li>
-      {% endfor %}
-    </ul>
-  </aside>
 
-  <section class="flex-1">
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-xl font-semibold">Products</h1>
-      <input
-        type="search" name="q" placeholder="Search products…"
-        class="border rounded px-3 py-2"
-        hx-get="{% url 'catalog:product_search' %}" hx-trigger="keyup changed delay:300ms"
-        hx-target="#grid" hx-indicator="#searching">
-      <span id="searching" class="htmx-indicator text-sm text-gray-500">Searching…</span>
-    </div>
-    <div id="grid">
-      {% include "catalog/_product_grid.html" %}
-    </div>
-  </section>
+{% block title %}Shop - TAC Jewellery{% endblock %}
+
+{% block extra_css %}
+<style>
+  #filter-arrow {
+    transition: transform 0.3s ease;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-serif font-bold text-gray-900 mb-4">
+      {% if active_category %}
+        {{ active_category.name }}
+      {% elif request.GET.gender == 'women' %}
+        Women's Collection
+      {% elif request.GET.gender == 'men' %}
+        Men's Collection
+      {% elif request.GET.is_featured == 'true' %}
+        Featured Items
+      {% else %}
+        Our Jewellery Collection
+      {% endif %}
+    </h1>
+    <p class="text-xl text-gray-600">
+      {% if active_category %}
+        {{ active_category.description|default:"Discover our exquisite "|add:active_category.name|lower }}
+      {% elif request.GET.gender == 'women' %}
+        Elegant pieces designed for the modern woman
+      {% elif request.GET.gender == 'men' %}
+        Bold and sophisticated pieces for the discerning gentleman
+      {% elif request.GET.is_featured == 'true' %}
+        Our most popular and exclusive pieces
+      {% else %}
+        Handcrafted jewellery for every occasion
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Mobile Filter Toggle Button -->
+  <div class="lg:hidden mb-6">
+    <button id="mobile-filter-toggle" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
+      <span class="flex items-center">
+        {% hgi_stroke name="settings-02" size="16" color="#374151" stroke_width="2" %}
+        <span class="ml-2 font-medium text-gray-700">Filters</span>
+      </span>
+      <span id="filter-arrow">{% hgi_stroke name="arrow-down-02" size="16" color="#374151" stroke_width="2" %}</span>
+    </button>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar Filters -->
+    <aside id="mobile-filters" class="lg:w-80 hidden lg:block">
+      <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+        <h2 class="text-xl font-serif font-bold text-gray-900 mb-6">Filters</h2>
+        
+        <!-- Search -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+          <form hx-get="{% url 'catalog:product_search' %}" hx-target="#product-grid" hx-trigger="input delay:300ms from:input[name=q]">
+            <div class="relative">
+              <input type="text" name="q" placeholder="Search jewellery..." 
+                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+                     value="{{ request.GET.q }}">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2">{% hgi_stroke name="search-01" size="16" color="#9ca3af" stroke_width="2" %}</span>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Categories -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Categories</h3>
+          <ul class="space-y-2">
+            <li>
+              <a href="{% url 'catalog:product_list' %}" 
+                 class="flex items-center justify-between py-2 px-3 rounded-lg {% if not active_category %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+                <span>All Products</span>
+                <span class="text-sm text-gray-500">{{ products|length }}</span>
+              </a>
+            </li>
+            {% for c in categories %}
+              <li>
+                <a href="{% url 'catalog:category' c.slug %}" 
+                   class="flex items-center justify-between py-2 px-3 rounded-lg {% if active_category == c %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+                  <span>{{ c.name }}</span>
+                  <span class="text-sm text-gray-500">{{ c.products.count }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        
+        <!-- Gender Filter -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Collection</h3>
+          <div class="space-y-2">
+            <a href="{% url 'catalog:product_list' %}" 
+               class="flex items-center py-2 px-3 rounded-lg {% if not request.GET.gender %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              {% hgi_stroke name="user-multiple" size="14" color="#374151" stroke_width="2" %}
+              <span class="ml-2">All</span>
+            </a>
+            <a href="{% url 'catalog:product_list' %}?gender=women" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.gender == 'women' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              {% hgi_stroke name="user" size="14" color="#374151" stroke_width="2" %}
+              <span class="ml-2">Women's</span>
+            </a>
+            <a href="{% url 'catalog:product_list' %}?gender=men" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.gender == 'men' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              {% hgi_stroke name="user" size="14" color="#374151" stroke_width="2" %}
+              <span class="ml-2">Men's</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Material Filter -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Material</h3>
+          <div class="space-y-2">
+            <a href="{% url 'catalog:product_list' %}" 
+               class="flex items-center py-2 px-3 rounded-lg {% if not request.GET.material %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              All Materials
+            </a>
+            <a href="{% url 'catalog:product_list' %}?material=gold" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.material == 'gold' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              <div class="w-4 h-4 bg-gold-500 rounded-full mr-2"></div>Gold
+            </a>
+            <a href="{% url 'catalog:product_list' %}?material=silver" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.material == 'silver' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              <div class="w-4 h-4 bg-gray-400 rounded-full mr-2"></div>Silver
+            </a>
+            <a href="{% url 'catalog:product_list' %}?material=platinum" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.material == 'platinum' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              <div class="w-4 h-4 bg-gray-300 rounded-full mr-2"></div>Platinum
+            </a>
+          </div>
+        </div>
+        
+        <!-- Special Filters -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Special</h3>
+          <div class="space-y-2">
+            <a href="{% url 'catalog:product_list' %}?is_featured=true" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.is_featured == 'true' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              {% hgi_stroke name="star" size="14" color="#f59e0b" stroke_width="2" %}
+              <span class="ml-2">Featured</span>
+            </a>
+            <a href="{% url 'catalog:product_list' %}?is_new=true" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.is_new == 'true' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              {% hgi_stroke name="star" size="14" color="#16a34a" stroke_width="2" %}
+              <span class="ml-2">New Arrivals</span>
+            </a>
+            <a href="{% url 'catalog:product_list' %}?is_bestseller=true" 
+               class="flex items-center py-2 px-3 rounded-lg {% if request.GET.is_bestseller == 'true' %}bg-gold-50 text-gold-700 font-medium{% else %}text-gray-700 hover:bg-gray-50{% endif %} transition-colors">
+              {% hgi_stroke name="award-05" size="14" color="#dc2626" stroke_width="2" %}
+              <span class="ml-2">Bestsellers</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Clear Filters -->
+        {% if request.GET %}
+          <a href="{% url 'catalog:product_list' %}" 
+             class="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors text-center block">
+            {% hgi_stroke name="cancel-01" size="14" color="#374151" stroke_width="2" %}
+            <span class="ml-2">Clear All Filters</span>
+          </a>
+        {% endif %}
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="flex-1">
+      <!-- Results Header -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <span class="text-gray-600">
+            {% if products %}
+              Showing {{ products|length }} product{{ products|length|pluralize }}
+            {% else %}
+              No products found
+            {% endif %}
+          </span>
+        </div>
+        
+        <!-- Sort Options -->
+        <div class="flex items-center gap-4">
+          <label class="text-sm font-semibold text-gray-700 flex items-center">
+            {% hgi_stroke name="sort-by-down-01" size="14" color="#d97706" stroke_width="2" %}
+            <span class="ml-2">Sort by:</span>
+          </label>
+          <!-- Custom Dropdown -->
+          <div class="custom-dropdown" data-dropdown>
+            <button type="button" class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+              <span class="dropdown-selected">
+                <i class="fas fa-clock mr-2"></i>Newest First
+              </span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="dropdown-menu" role="menu">
+              <div class="dropdown-option" data-value="created_at" role="menuitem">
+                <i class="fas fa-clock mr-2"></i>Newest First
+              </div>
+              <div class="dropdown-option" data-value="-created_at" role="menuitem">
+                <i class="fas fa-history mr-2"></i>Oldest First
+              </div>
+              <div class="dropdown-option" data-value="price_cents" role="menuitem">
+                <i class="fas fa-arrow-up mr-2"></i>Price: Low to High
+              </div>
+              <div class="dropdown-option" data-value="-price_cents" role="menuitem">
+                <i class="fas fa-arrow-down mr-2"></i>Price: High to Low
+              </div>
+              <div class="dropdown-option" data-value="name" role="menuitem">
+                <i class="fas fa-sort-alpha-down mr-2"></i>Name: A to Z
+              </div>
+              <div class="dropdown-option" data-value="-name" role="menuitem">
+                <i class="fas fa-sort-alpha-up mr-2"></i>Name: Z to A
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Grid -->
+      <div id="product-grid">
+        {% include "catalog/_product_grid.html" %}
+      </div>
+      
+      <!-- Pagination (if needed) -->
+      {% if products.has_other_pages %}
+        <div class="mt-12 flex justify-center">
+          <nav class="flex items-center space-x-2">
+            {% if products.has_previous %}
+              <a href="?page={{ products.previous_page_number }}" class="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            {% endif %}
+            
+            {% for num in products.paginator.page_range %}
+              {% if products.number == num %}
+                <span class="px-3 py-2 bg-gold-500 text-white rounded-lg">{{ num }}</span>
+              {% else %}
+                <a href="?page={{ num }}" class="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+            
+            {% if products.has_next %}
+              <a href="?page={{ products.next_page_number }}" class="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
+    </main>
+  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdown = document.querySelector('[data-dropdown]');
+    const productGrid = document.getElementById('product-grid');
+    
+    if (dropdown && productGrid) {
+        dropdown.addEventListener('sortChanged', function(e) {
+            const sortValue = e.detail.value;
+            
+            // Add loading state
+            productGrid.style.opacity = '0.6';
+            productGrid.style.pointerEvents = 'none';
+            
+            // Create URL with sort parameter
+            const url = new URL(window.location);
+            url.searchParams.set('sort', sortValue);
+            
+            // Use HTMX to reload the product grid
+            fetch(url.toString(), {
+                headers: {
+                    'HX-Request': 'true'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                productGrid.innerHTML = html;
+                productGrid.style.opacity = '1';
+                productGrid.style.pointerEvents = 'auto';
+            })
+            .catch(error => {
+                console.error('Error sorting products:', error);
+                productGrid.style.opacity = '1';
+                productGrid.style.pointerEvents = 'auto';
+            });
+        });
+    }
+});
+
+// Mobile Filter Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileFilterToggle = document.getElementById('mobile-filter-toggle');
+    const mobileFilters = document.getElementById('mobile-filters');
+    const filterArrow = document.getElementById('filter-arrow');
+    
+    if (mobileFilterToggle && mobileFilters && filterArrow) {
+        mobileFilterToggle.addEventListener('click', function() {
+            const isHidden = mobileFilters.classList.contains('hidden');
+            
+            if (isHidden) {
+                // Show filters
+                mobileFilters.classList.remove('hidden');
+                mobileFilters.classList.add('block');
+                filterArrow.style.transform = 'rotate(180deg)';
+            } else {
+                // Hide filters
+                mobileFilters.classList.add('hidden');
+                mobileFilters.classList.remove('block');
+                filterArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

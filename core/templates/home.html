@@ -1,7 +1,523 @@
 {% extends "base.html" %}
-{% block title %}Home · tac-ecommerce{% endblock %}
+
+{% block title %}Home - TAC Jewellery{% endblock %}
+
 {% block content %}
-  <h1 class="text-2xl font-semibold mb-4">Welcome to tac-ecommerce</h1>
-  <p class="mb-6">Browse our latest products.</p>
-  <a href="{% url 'catalog:product_list' %}" class="px-4 py-2 bg-black text-white rounded">Shop now</a>
+<!-- Hero Section -->
+<section class="relative h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-gold-900/80 to-gold-700/80 z-10"></div>
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+    
+    <div class="relative z-20 text-center text-white px-4 max-w-4xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-serif font-bold mb-4 sm:mb-6 text-shadow animate-fade-in">
+            TAC Jewellery
+        </h1>
+        <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-8 text-shadow animate-fade-in">
+            Premium Gold & Silver Accessories
+        </p>
+        <p class="text-sm sm:text-base md:text-lg mb-8 sm:mb-12 text-shadow animate-fade-in px-2">
+            Crafted with passion, designed for elegance. Discover our exquisite collection of handcrafted jewellery.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-slide-up px-4">
+            <a href="{% url 'catalog:product_list' %}" class="gradient-gold text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                <span class="mr-2 flex items-center">{% hgi_stroke name="diamond-02" size="18" color="#ffffff" stroke_width="2" %}</span>
+                <span>Explore Collection</span>
+            </a>
+            <a href="{% url 'catalog:product_list' %}?is_featured=true" class="bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center">
+                <span class="mr-2 flex items-center">{% hgi_stroke name="star" size="18" color="#ffffff" stroke_width="2" %}</span>
+                <span>Featured Items</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
+        {% hgi_stroke name="arrow-down-02" size="24" color="#ffffff" stroke_width="2" %}
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-12 sm:py-16 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4">Our Collections</h2>
+            <p class="text-base sm:text-lg lg:text-xl text-gray-600">Discover jewellery for every occasion and style</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Women's Collection -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                <div class="aspect-[4/5] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+                    <h3 class="text-3xl font-serif font-bold mb-2">Women's Collection</h3>
+                    <p class="text-lg mb-4 opacity-90">Elegant pieces designed for the modern woman</p>
+                    <a href="{% url 'catalog:product_list' %}?gender=women" class="inline-flex items-center text-gold-300 hover:text-gold-200 font-semibold transition-colors">
+                        Shop Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Men's Collection -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                <div class="aspect-[4/5] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+                    <h3 class="text-3xl font-serif font-bold mb-2">Men's Collection</h3>
+                    <p class="text-lg mb-4 opacity-90">Bold and sophisticated pieces for the discerning gentleman</p>
+                    <a href="{% url 'catalog:product_list' %}?gender=men" class="inline-flex items-center text-gold-300 hover:text-gold-200 font-semibold transition-colors">
+                        Shop Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Featured Collection -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 md:col-span-2 lg:col-span-1">
+                <div class="aspect-[4/5] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                <div class="absolute top-4 right-4">
+                    <span class="bg-gold-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <i class="fas fa-star mr-1"></i>Featured
+                    </span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+                    <h3 class="text-3xl font-serif font-bold mb-2">Featured Items</h3>
+                    <p class="text-lg mb-4 opacity-90">Our most popular and exclusive pieces</p>
+                    <a href="{% url 'catalog:product_list' %}?is_featured=true" class="inline-flex items-center text-gold-300 hover:text-gold-200 font-semibold transition-colors">
+                        Explore <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Materials Section -->
+<section class="py-20 bg-gradient-to-br from-gold-50 to-amber-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-3 sm:mb-4">Premium Materials</h2>
+            <p class="text-lg sm:text-xl text-gray-600">Crafted from the finest materials for lasting beauty</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            <div class="text-center group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 gradient-gold rounded-full mx-auto mb-4 sm:mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    {% hgi_stroke name="diamond-02" size="28" color="#ffffff" stroke_width="2" %}
+                </div>
+                <h3 class="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-3 sm:mb-4">Gold</h3>
+                <p class="text-sm sm:text-base text-gray-600">18K and 24K gold pieces crafted with precision and care</p>
+            </div>
+            
+            <div class="text-center group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-300 to-gray-500 rounded-full mx-auto mb-4 sm:mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    {% hgi_stroke name="unlink-05" size="28" color="#ffffff" stroke_width="2" %}
+                </div>
+                <h3 class="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-3 sm:mb-4">Silver</h3>
+                <p class="text-sm sm:text-base text-gray-600">Sterling silver accessories with timeless elegance</p>
+            </div>
+            
+            <div class="text-center group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 gradient-rose-gold rounded-full mx-auto mb-4 sm:mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    {% hgi_stroke name="favourite" size="28" color="#ffffff" stroke_width="2" %}
+                </div>
+                <h3 class="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-3 sm:mb-4">Rose Gold</h3>
+                <p class="text-sm sm:text-base text-gray-600">Romantic rose gold pieces for special moments</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Items Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-3 sm:mb-4">Featured Items</h2>
+            <p class="text-lg sm:text-xl text-gray-600">Discover our handpicked collection of premium jewellery pieces</p>
+        </div>
+        
+        {% if featured_products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {% for product in featured_products %}
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+                <div class="relative overflow-hidden">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-64 sm:h-72 object-cover group-hover:scale-105 transition-transform duration-300">
+                    {% else %}
+                        <div class="w-full h-64 sm:h-72 bg-gradient-to-br from-gold-100 to-gold-200 flex items-center justify-center">
+                            <span class="text-4xl">{% hgi_stroke name="diamond-02" size="48" color="#d97706" stroke_width="2" %}</span>
+                        </div>
+                    {% endif %}
+                    {% if product.compare_price_cents and product.compare_price_cents > product.price_cents %}
+                        <div class="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            Sale
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="p-4 sm:p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-500 font-medium">{{ product.category.name }}</span>
+                        <span class="text-xs text-gray-400">{{ product.get_material_display }}</span>
+                    </div>
+                    
+                    <h3 class="text-lg sm:text-xl font-serif font-bold text-gray-900 mb-2 group-hover:text-gold-600 transition-colors duration-200">
+                        {{ product.name }}
+                    </h3>
+                    
+                    {% if product.short_description %}
+                        <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ product.short_description }}</p>
+                    {% endif %}
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl sm:text-2xl font-bold text-gold-600">KSh {{ product.price_display }}</span>
+                            {% if product.compare_price_cents and product.compare_price_cents > product.price_cents %}
+                                <span class="text-sm text-gray-400 line-through">KSh {{ product.compare_price_display }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{% url 'catalog:product_detail' product.slug %}" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 flex items-center">
+                            <span class="mr-1">{% hgi_stroke name="eye" size="14" color="#ffffff" stroke_width="2" %}</span>
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="{% url 'catalog:product_list' %}?is_featured=true" class="gradient-gold text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 inline-flex items-center">
+                <span class="mr-2">{% hgi_stroke name="star" size="18" color="#ffffff" stroke_width="2" %}</span>
+                View All Featured Items
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gradient-to-br from-gold-100 to-gold-200 rounded-full mx-auto mb-6 flex items-center justify-center">
+                {% hgi_stroke name="star" size="32" color="#d97706" stroke_width="2" %}
+            </div>
+            <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">No Featured Items Yet</h3>
+            <p class="text-gray-600 mb-6">Check back soon for our curated collection of premium jewellery pieces.</p>
+            <a href="{% url 'catalog:product_list' %}" class="gradient-gold text-white px-6 py-3 rounded-full text-base font-semibold hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 inline-flex items-center">
+                <span class="mr-2">{% hgi_stroke name="shopping-cart-02" size="16" color="#ffffff" stroke_width="2" %}</span>
+                Browse All Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gray-900 text-white">
+    <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-serif font-bold mb-6">Ready to Find Your Perfect Piece?</h2>
+        <p class="text-xl mb-8 text-gray-300">Join thousands of satisfied customers who trust TAC Jewellery for their most precious moments.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'catalog:product_list' %}" class="gradient-gold text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                <span class="mr-2 flex items-center">{% hgi_stroke name="shopping-cart-02" size="18" color="#ffffff" stroke_width="2" %}</span>
+                <span>Start Shopping</span>
+            </a>
+            <a href="#contact" class="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/20 transition-all duration-300 border border-white/30 flex items-center justify-center">
+                <span class="mr-2 flex items-center">{% hgi_stroke name="call" size="18" color="#ffffff" stroke_width="2" %}</span>
+                <span>Contact Us</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-3 sm:mb-4">What Our Customers Say</h2>
+            <p class="text-lg sm:text-xl text-gray-600">Real stories from satisfied customers who love their TAC Jewellery</p>
+        </div>
+        
+            <!-- Testimonials Carousel -->
+            <div class="relative px-4 sm:px-8 lg:px-20 py-8 sm:py-12">
+                <!-- Navigation Arrows -->
+                <button id="testimonials-prev" class="absolute left-1 sm:left-2 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gold-600 hover:bg-gold-50 transition-all duration-300 hover:scale-110">
+                    {% hgi_stroke name="arrow-left-02" size="16" color="#d97706" stroke_width="2" %}
+                </button>
+                <button id="testimonials-next" class="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gold-600 hover:bg-gold-50 transition-all duration-300 hover:scale-110">
+                    {% hgi_stroke name="arrow-right-02" size="16" color="#d97706" stroke_width="2" %}
+                </button>
+            
+            <!-- Testimonials Container -->
+            <div class="overflow-hidden relative">
+                <!-- Left Gradient Overlay -->
+                <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
+                <!-- Right Gradient Overlay -->
+                <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+                
+                <div class="overflow-visible py-4">
+                    <div id="testimonials-container" class="flex transition-transform duration-500 ease-in-out">
+                            <!-- Testimonial 1 -->
+                            <div class="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-3 sm:px-4 py-4">
+                                <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 h-full min-h-[280px] sm:min-h-[320px]">
+                                    <div class="flex items-center mb-4 sm:mb-6">
+                                        <div class="flex text-gold-400">
+                                            {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                            {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                            {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                            {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                            {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-800 mb-4 sm:mb-6 italic text-sm sm:text-base lg:text-lg leading-relaxed">"Absolutely stunning! The quality is exceptional and the design is exactly what I was looking for. My engagement ring from TAC Jewellery exceeded all my expectations."</p>
+                                    <div class="flex items-center mt-auto">
+                                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                                            {% hgi_stroke name="user" size="20" color="#ffffff" stroke_width="2" %}
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-900 text-base sm:text-lg">Sarah M.</h4>
+                                            <p class="text-xs sm:text-sm text-gray-600">Nairobi, Kenya</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-3 sm:px-4 py-4">
+                        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 h-full min-h-[280px] sm:min-h-[320px]">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="flex text-gold-400">
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                </div>
+                            </div>
+                            <p class="text-gray-800 mb-4 sm:mb-6 italic text-sm sm:text-base lg:text-lg leading-relaxed">"The customer service is outstanding! They helped me choose the perfect necklace for my wife's birthday. The delivery was fast and the packaging was beautiful."</p>
+                            <div class="flex items-center mt-auto">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                                    {% hgi_stroke name="user" size="20" color="#ffffff" stroke_width="2" %}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-base sm:text-lg">James K.</h4>
+                                    <p class="text-xs sm:text-sm text-gray-600">Mombasa, Kenya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-3 sm:px-4 py-4">
+                        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 h-full min-h-[280px] sm:min-h-[320px]">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="flex text-gold-400">
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                </div>
+                            </div>
+                            <p class="text-gray-800 mb-4 sm:mb-6 italic text-sm sm:text-base lg:text-lg leading-relaxed">"I've been a customer for over 2 years now. Every piece I've bought has been of the highest quality. TAC Jewellery is my go-to for all special occasions."</p>
+                            <div class="flex items-center mt-auto">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                                    {% hgi_stroke name="user" size="20" color="#ffffff" stroke_width="2" %}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-base sm:text-lg">Grace W.</h4>
+                                    <p class="text-xs sm:text-sm text-gray-600">Kisumu, Kenya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 4 -->
+                    <div class="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-3 sm:px-4 py-4">
+                        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 h-full min-h-[280px] sm:min-h-[320px]">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="flex text-gold-400">
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                </div>
+                            </div>
+                            <p class="text-gray-800 mb-4 sm:mb-6 italic text-sm sm:text-base lg:text-lg leading-relaxed">"The craftsmanship is incredible! I bought a custom bracelet and it turned out even better than I imagined. Highly recommend TAC Jewellery!"</p>
+                            <div class="flex items-center mt-auto">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                                    {% hgi_stroke name="user" size="20" color="#ffffff" stroke_width="2" %}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-base sm:text-lg">Michael T.</h4>
+                                    <p class="text-xs sm:text-sm text-gray-600">Eldoret, Kenya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 5 -->
+                    <div class="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-3 sm:px-4 py-4">
+                        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 h-full min-h-[280px] sm:min-h-[320px]">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="flex text-gold-400">
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                </div>
+                            </div>
+                            <p class="text-gray-800 mb-4 sm:mb-6 italic text-sm sm:text-base lg:text-lg leading-relaxed">"Beautiful pieces at reasonable prices. The gold chain I bought for my husband is still as shiny as the day I bought it. Great value for money!"</p>
+                            <div class="flex items-center mt-auto">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                                    {% hgi_stroke name="user" size="20" color="#ffffff" stroke_width="2" %}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-base sm:text-lg">Linda A.</h4>
+                                    <p class="text-xs sm:text-sm text-gray-600">Nakuru, Kenya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 6 -->
+                    <div class="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-3 sm:px-4 py-4">
+                        <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 h-full min-h-[280px] sm:min-h-[320px]">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="flex text-gold-400">
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                    {% hgi_stroke name="star" size="16" color="#f59e0b" stroke_width="2" %}
+                                </div>
+                            </div>
+                            <p class="text-gray-800 mb-4 sm:mb-6 italic text-sm sm:text-base lg:text-lg leading-relaxed">"Fast delivery and excellent packaging. The earrings I ordered arrived in perfect condition. Will definitely be ordering more pieces soon!"</p>
+                            <div class="flex items-center mt-auto">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                                    {% hgi_stroke name="user" size="20" color="#ffffff" stroke_width="2" %}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-base sm:text-lg">David O.</h4>
+                                    <p class="text-xs sm:text-sm text-gray-600">Thika, Kenya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dots Indicator -->
+            <div class="flex justify-center mt-12 space-x-3">
+                <button class="testimonial-dot w-4 h-4 rounded-full bg-gold-300 transition-all duration-300 hover:scale-125" data-slide="0"></button>
+                <button class="testimonial-dot w-4 h-4 rounded-full bg-gray-300 transition-all duration-300 hover:scale-125" data-slide="1"></button>
+                <button class="testimonial-dot w-4 h-4 rounded-full bg-gray-300 transition-all duration-300 hover:scale-125" data-slide="2"></button>
+                <button class="testimonial-dot w-4 h-4 rounded-full bg-gray-300 transition-all duration-300 hover:scale-125" data-slide="3"></button>
+            </div>
+        </div>
+        
+        <!-- Trust Indicators -->
+        <div class="mt-16 sm:mt-20 text-center">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+                <div class="flex flex-col items-center group">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        {% hgi_stroke name="user-multiple" size="20" color="#d97706" stroke_width="2" %}
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">10,000+</h3>
+                    <p class="text-sm sm:text-base text-gray-600 font-medium text-center">Happy Customers</p>
+                </div>
+                
+                <div class="flex flex-col items-center group">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        {% hgi_stroke name="time-04" size="20" color="#d97706" stroke_width="2" %}
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">24/7</h3>
+                    <p class="text-sm sm:text-base text-gray-600 font-medium text-center">Customer Support</p>
+                </div>
+                
+                <div class="flex flex-col items-center group">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        {% hgi_stroke name="award-05" size="20" color="#d97706" stroke_width="2" %}
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">5 Years</h3>
+                    <p class="text-sm sm:text-base text-gray-600 font-medium text-center">Trusted Experience</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('testimonials-container');
+    const prevBtn = document.getElementById('testimonials-prev');
+    const nextBtn = document.getElementById('testimonials-next');
+    const dots = document.querySelectorAll('.testimonial-dot');
+    
+    let currentSlide = 0;
+    const totalSlides = 4; // Number of slides (6 testimonials / 1.5 per slide on desktop)
+    
+    function updateCarousel() {
+        const slideWidth = 100 / totalSlides;
+        container.style.transform = `translateX(-${currentSlide * slideWidth}%)`;
+        
+        // Update dots
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('bg-gold-300', index === currentSlide);
+            dot.classList.toggle('bg-gray-300', index !== currentSlide);
+        });
+    }
+    
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+    }
+    
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+    }
+    
+    // Event listeners
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    
+    // Dot navigation
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            updateCarousel();
+        });
+    });
+    
+    // Auto-play (optional)
+    setInterval(nextSlide, 5000);
+    
+    // Touch/swipe support for mobile
+    let startX = 0;
+    let endX = 0;
+    
+    container.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+    });
+    
+    container.addEventListener('touchend', (e) => {
+        endX = e.changedTouches[0].clientX;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        const threshold = 50;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+    }
+});
+</script>
 {% endblock %}

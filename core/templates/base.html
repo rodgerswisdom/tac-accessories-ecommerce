@@ -1,41 +1,1738 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{% block title %}tac-ecommerce{% endblock %}</title>
-  <!-- Tailwind CDN -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TAC Jewellery - Premium Gold & Silver Accessories{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- HTMX 2.x -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gold': {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        'rose-gold': {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        'platinum': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Poppins', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-gentle': 'bounceGentle 0.6s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- HugeIcons Django Package (loaded globally) -->
   <script src="https://unpkg.com/htmx.org@2.0.0"></script>
-  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .gradient-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+        .gradient-rose-gold {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Navbar scroll animations */
+        #navbar {
+            will-change: transform;
+        }
+        
+        /* Enhanced shadow when navbar is visible */
+        #navbar.translate-y-0 {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        #navbar.-translate-y-full {
+            box-shadow: none;
+        }
+        
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Legacy select styles - kept for any remaining select elements */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15), 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+        
+        select:hover {
+            border-color: #d4af37;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Custom Dropdown Styling */
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+            min-width: 200px;
+        }
+        
+        .dropdown-trigger {
+            width: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #fefbf3 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+        }
+        
+        .dropdown-trigger:hover {
+            border-color: #d4af37;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #ffffff 0%, #fefbf3 100%);
+        }
+        
+        .dropdown-trigger:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2), 0 6px 20px rgba(212, 175, 55, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .dropdown-trigger[aria-expanded="true"] {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2), 0 6px 20px rgba(212, 175, 55, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .dropdown-selected {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .dropdown-arrow {
+            color: #d4af37;
+            font-size: 12px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-left: 12px;
+        }
+        
+        .dropdown-trigger[aria-expanded="true"] .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-option {
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .dropdown-option:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-option:hover {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            transform: translateX(4px);
+        }
+        
+        .dropdown-option.selected {
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        .dropdown-option.selected:hover {
+            background: linear-gradient(135deg, #b8860b 0%, #9a6b00 100%);
+            color: #ffffff;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .custom-dropdown {
+                min-width: 160px;
+            }
+            
+            .dropdown-trigger {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+            
+            .dropdown-option {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Animation for smooth dropdown appearance */
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .dropdown-menu.show {
+            animation: dropdownFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Modern Glassy Badge Styling */
+        .glass-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+                        0 2px 8px rgba(0, 0, 0, 0.05),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .glass-badge:hover::before {
+            left: 100%;
+        }
+        
+        .glass-badge:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
+                        0 4px 12px rgba(0, 0, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Glass Badge Color Variants */
+        .glass-badge-green {
+            background: rgba(34, 197, 94, 0.8);
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-badge-gold {
+            background: rgba(212, 175, 55, 0.8);
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-badge-red {
+            background: rgba(239, 68, 68, 0.8);
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-badge-discount {
+            background: rgba(220, 38, 38, 0.8);
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            font-weight: 300;
+            font-size: 12px;
+        }
+        
+        /* Enhanced glass effect for premium feel */
+        .glass-badge::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            bottom: 1px;
+            border-radius: 19px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            pointer-events: none;
+        }
+        
+        /* Glass effect for premium feel */
+        select.glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        select.glass-effect:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        
+        select.glass-effect:focus {
+            background: rgba(255, 255, 255, 0.98);
+            border-color: #d4af37;
+        }
+        
+        /* Custom select wrapper for better styling */
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .select-wrapper::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #6b7280;
+            pointer-events: none;
+        }
+        
+        /* Premium dropdown variant */
+        select.premium {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #d4af37;
+            color: #92400e;
+            font-weight: 600;
+        }
+        
+        select.premium:hover {
+            background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+            border-color: #b8860b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        select.premium:focus {
+            background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+            border-color: #b8860b;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25), 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Elegant dropdown variant */
+        select.elegant {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        select.elegant:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-color: #d4af37;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        select.elegant:focus {
+            background: linear-gradient(135deg, #ffffff 0%, #fefbf3 100%);
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Dark theme dropdown */
+        select.dark {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border: 1px solid #6b7280;
+            color: #f9fafb;
+        }
+        
+        select.dark:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            border-color: #d4af37;
+        }
+        
+        select.dark:focus {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Responsive dropdown sizing */
+        @media (max-width: 640px) {
+            select {
+                padding: 10px 40px 10px 14px;
+                font-size: 13px;
+                min-width: 140px;
+            }
+            
+            .select-wrapper::after {
+                right: 10px;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 4px solid #6b7280;
+            }
+        }
+        
+        /* Global font inheritance */
+        * {
+            font-family: 'Poppins', sans-serif !important;
+        }
+        
+        /* Ensure all text elements use Poppins */
+        body, html, p, span, div, a, button, input, textarea, select, label, li, td, th {
+            font-family: 'Poppins', sans-serif !important;
+        }
+        
+        /* Only headings with font-serif class use Playfair Display */
+        .font-serif, h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, h5.font-serif, h6.font-serif {
+            font-family: 'Playfair Display', serif !important;
+        }
+        
+        /* HugeIcons styling */
+        .hgi-icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        /* Floating WhatsApp Button Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating-whatsapp {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .floating-whatsapp:hover {
+            animation: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
-  <header class="border-b bg-white">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="font-semibold text-xl">tac-ecommerce</a>
-      <nav class="flex gap-4">
-        <a href="{% url 'catalog:product_list' %}" class="hover:underline">Shop</a>
-        <a href="{% url 'cart:view' %}" class="hover:underline">Cart</a>
-        {% if request.user.is_authenticated %}
-          <a href="{% url 'accounts:logout' %}" class="hover:underline">Logout</a>
+<body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 " style="font-family: 'Poppins', sans-serif;">
+    <!-- Navigation -->
+    <nav id="navbar" class="glass-effect shadow-lg border-b border-gold-200 fixed top-0 left-0 right-0 z-50 transform transition-transform duration-300 ease-in-out">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+            <div class="flex justify-between h-16 sm:h-20">
+                <div class="flex items-center">
+                    <a href="{% url 'core:home' %}" class="flex items-center space-x-2 sm:space-x-3">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 gradient-gold rounded-full flex items-center justify-center">
+                            {% hgi_stroke name="diamond-02" size="20" color="#ffffff" stroke_width="2" %}
+                        </div>
+                        <div class="hidden sm:block">
+                            <h1 class="text-lg sm:text-2xl font-serif font-bold text-gray-900">TAC Jewellery</h1>
+                            <p class="text-xs text-gray-600 -mt-1">Premium Gold & Silver</p>
+                        </div>
+                        <div class="sm:hidden">
+                            <h1 class="text-lg font-serif font-bold text-gray-900">TAC</h1>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-6 xl:space-x-8">
+                    <a href="{% url 'core:home' %}" class="text-gray-700 hover:text-gold-600 transition-colors duration-200 font-medium">Home</a>
+                    <a href="{% url 'catalog:product_list' %}" class="text-gray-700 hover:text-gold-600 transition-colors duration-200 font-medium">Shop</a>
+                    <a href="{% url 'catalog:product_list' %}?gender=women" class="text-gray-700 hover:text-gold-600 transition-colors duration-200 font-medium flex items-center">
+                        <span class="mr-2">{% hgi_stroke name="user" size="16" color="#374151" stroke_width="2" %}</span>Women's
+                    </a>
+                    <a href="{% url 'catalog:product_list' %}?gender=men" class="text-gray-700 hover:text-gold-600 transition-colors duration-200 font-medium flex items-center">
+                        <span class="mr-2">{% hgi_stroke name="user" size="16" color="#374151" stroke_width="2" %}</span>Men's
+                    </a>
+                </div>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Search (Hidden on mobile) -->
+                    <div class="hidden lg:block relative">
+                        <input type="text" placeholder="Search jewellery..." 
+                               class="w-48 xl:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-200">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2">{% hgi_stroke name="search-01" size="16" color="#9ca3af" stroke_width="2" %}</span>
+                    </div>
+                    
+                    <!-- Action Icons -->
+                    <div class="flex items-center space-x-1 sm:space-x-3">
+                        <!-- Liked Items -->
+                        <button class="relative text-gray-700 hover:text-red-500 transition-colors duration-200 p-1 sm:p-2">
+                            {% hgi_stroke name="favourite" size="20" color="#374151" stroke_width="2" %}
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">0</span>
+                        </button>
+                        
+                        <!-- Cart -->
+                        <button id="cart-button" class="relative text-gray-700 hover:text-gold-600 transition-colors duration-200 p-1 sm:p-2">
+                            {% hgi_stroke name="shopping-cart-02" size="20" color="#374151" stroke_width="2" %}
+                            <span id="cart-count" class="absolute -top-1 -right-1 bg-gold-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">{{ cart_count }}</span>
+                        </button>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-gold-600 transition-colors duration-200">
+                                <i class="fas fa-user-circle text-lg sm:text-xl"></i>
+                                <span class="hidden xl:block">{{ user.first_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down text-xs hidden sm:block"></i>
+                            </button>
+                            <div class="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <a href="{% url 'accounts:profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors">
+                                    <i class="fas fa-user mr-2"></i>Profile
+                                </a>
+                                <a href="{% url 'checkout:order_list' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors">
+                                    <i class="fas fa-shopping-bag mr-2"></i>Orders
+                                </a>
+                                <a href="{% url 'accounts:logout' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
         {% else %}
-          <a href="{% url 'accounts:login' %}" class="hover:underline">Login</a>
+                        <a href="{% url 'accounts:login' %}" class="hidden sm:block text-gray-700 hover:text-gold-600 transition-colors duration-200 font-medium">Login</a>
+                        <a href="{% url 'accounts:signup' %}" class="gradient-gold text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-sm sm:text-base">
+                            Sign Up
+                        </a>
         {% endif %}
+                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="lg:hidden text-gray-700 hover:text-gold-600 transition-colors duration-200 p-1">
+                        <i class="fas fa-bars text-lg sm:text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 bg-white">
+                <div class="px-4 py-4 space-y-4">
+                    <!-- Mobile Search -->
+                    <div class="relative">
+                        <input type="text" placeholder="Search jewellery..." 
+                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-200">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- Mobile Navigation Links -->
+                    <div class="space-y-2">
+                        <a href="{% url 'core:home' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors rounded-lg">Home</a>
+                        <a href="{% url 'catalog:product_list' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors rounded-lg">Shop</a>
+                        <a href="{% url 'catalog:product_list' %}?gender=women" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors rounded-lg">
+                            <i class="fas fa-female mr-2"></i>Women's
+                        </a>
+                        <a href="{% url 'catalog:product_list' %}?gender=men" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors rounded-lg">
+                            <i class="fas fa-male mr-2"></i>Men's
+                        </a>
+                    </div>
+                    
+                    <!-- Mobile User Actions -->
+                    {% if not user.is_authenticated %}
+                        <div class="pt-4 border-t border-gray-200 space-y-2">
+                            <a href="{% url 'accounts:login' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold-50 hover:text-gold-600 transition-colors rounded-lg">Login</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
       </nav>
-    </div>
-  </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-6">
-    {% include "partials/messages.html" %}
+    <!-- Main Content -->
+    <main class="min-h-screen pt-16 sm:pt-20">
+        {% include 'partials/messages.html' %}
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="border-t bg-white">
-    <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-gray-600">
-      © {% now "Y" %} tac-ecommerce
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex flex-col h-full">
+            <!-- Cart Header -->
+            <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+                <h2 class="text-lg sm:text-xl font-serif font-bold text-gray-900">Shopping Cart</h2>
+                <button id="close-cart" class="text-gray-500 hover:text-gray-700 transition-colors p-2">
+                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Cart Items -->
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 sm:p-6">
+                <div class="text-center py-8 sm:py-12">
+                    <i class="fas fa-shopping-cart text-3xl sm:text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 text-base sm:text-lg">Your cart is empty</p>
+                    <p class="text-sm text-gray-400 mt-2">Add some beautiful jewellery to get started</p>
+                </div>
+            </div>
+            
+            <!-- Cart Footer -->
+            <div id="cart-footer" class="hidden border-t border-gray-200 p-4 sm:p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-base sm:text-lg font-semibold text-gray-900">Total:</span>
+                    <span id="cart-total-amount" class="text-lg sm:text-xl font-bold text-gold-600">KES 0.00</span>
+                </div>
+                <div class="space-y-3">
+                    <a href="{% url 'cart:view' %}" class="block w-full gradient-gold text-white text-center py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-sm sm:text-base">
+                        View Cart
+                    </a>
+                    <button class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm sm:text-base">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- Quick Add to Cart Modal -->
+    <div id="quick-add-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-3 sm:p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform scale-95 transition-transform duration-300" id="modal-content">
+                <div class="p-4 sm:p-6">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <h3 class="text-lg sm:text-xl font-serif font-bold text-gray-900">Add to Cart</h3>
+                        <button id="close-modal" class="text-gray-500 hover:text-gray-700 transition-colors p-1">
+                            <i class="fas fa-times text-lg sm:text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div id="modal-product-info" class="mb-6">
+                        <!-- Product details will be populated here -->
+                    </div>
+                    
+                    <!-- Quantity Selector -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Quantity</label>
+                        <div class="flex items-center justify-center space-x-4">
+                            <button id="decrease-qty" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                <i class="fas fa-minus text-sm"></i>
+                            </button>
+                            <span id="quantity-display" class="text-2xl font-bold text-gray-900 w-12 text-center">1</span>
+                            <button id="increase-qty" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                <i class="fas fa-plus text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-3">
+                        <button id="add-to-cart-btn" class="flex-1 gradient-gold text-white py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium">
+                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300" id="detail-modal-content">
+                <div class="p-6">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-serif font-bold text-gray-900">Product Details</h3>
+                        <button id="close-detail-modal" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Product Detail Content -->
+                    <div id="product-detail-content" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Product details will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Chat Modal -->
+    <div id="whatsapp-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform scale-95 transition-transform duration-300">
+                <div class="p-6">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fab fa-whatsapp text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-serif font-bold text-gray-900">Chat with Us</h3>
+                                <p class="text-sm text-gray-600">Get instant support via WhatsApp</p>
+                            </div>
+                        </div>
+                        <button id="close-whatsapp-modal" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Chat Form -->
+                    <form id="whatsapp-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                            <input type="text" id="whatsapp-name" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                                   placeholder="Enter your name">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Message</label>
+                            <textarea id="whatsapp-message" required rows="4"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 resize-none"
+                                      placeholder="Hi! I'm interested in your jewellery. Can you help me?"></textarea>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button type="button" id="cancel-whatsapp" 
+                                    class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center">
+                                <i class="fab fa-whatsapp mr-2"></i>
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Quick Messages -->
+                    <div class="mt-6">
+                        <p class="text-sm font-medium text-gray-700 mb-3">Quick Messages:</p>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button class="quick-message text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                                    data-message="Hi! I'm interested in your gold jewellery collection. Can you show me some options?">
+                                <i class="fas fa-gem text-gold-500 mr-2"></i>
+                                Gold Jewellery Inquiry
+                            </button>
+                            <button class="quick-message text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                                    data-message="Hello! I'd like to know about your pricing and delivery options.">
+                                <i class="fas fa-truck text-blue-500 mr-2"></i>
+                                Pricing & Delivery
+                            </button>
+                            <button class="quick-message text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                                    data-message="Hi! Do you have any special offers or discounts available?">
+                                <i class="fas fa-percent text-green-500 mr-2"></i>
+                                Special Offers
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 gradient-gold rounded-full flex items-center justify-center">
+                            <i class="fas fa-gem text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-serif font-bold">TAC Jewellery</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">Premium gold and silver jewellery crafted with passion and precision.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'core:home' %}" class="text-gray-400 hover:text-gold-400 transition-colors">Home</a></li>
+                        <li><a href="{% url 'catalog:product_list' %}" class="text-gray-400 hover:text-gold-400 transition-colors">Shop</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-gold-400 transition-colors">About</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-gold-400 transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'catalog:product_list' %}?gender=women" class="text-gray-400 hover:text-gold-400 transition-colors">Women's Collection</a></li>
+                        <li><a href="{% url 'catalog:product_list' %}?gender=men" class="text-gray-400 hover:text-gold-400 transition-colors">Men's Collection</a></li>
+                        <li><a href="{% url 'catalog:product_list' %}?material=gold" class="text-gray-400 hover:text-gold-400 transition-colors">Gold Jewellery</a></li>
+                        <li><a href="{% url 'catalog:product_list' %}?material=silver" class="text-gray-400 hover:text-gold-400 transition-colors">Silver Jewellery</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Info</h4>
+                    <div class="space-y-2 text-sm text-gray-400">
+                        <p><i class="fas fa-phone mr-2"></i>+254 700 000 000</p>
+                        <p><i class="fas fa-envelope mr-2"></i>info@tacjewellery.com</p>
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>Nairobi, Kenya</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2024 TAC Jewellery. All rights reserved.</p>
+            </div>
     </div>
   </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Navbar scroll functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbar = document.getElementById('navbar');
+            let lastScrollTop = 0;
+            let scrollTimeout;
+            
+            // Throttle function to limit scroll event frequency
+            function throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                }
+            }
+            
+            // Handle scroll events
+            function handleScroll() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+                
+                // Only hide/show navbar if scrolled more than 100px
+                if (scrollTop > 100) {
+                    if (scrollDirection === 'down') {
+                        // Scrolling down - hide navbar
+                        navbar.classList.add('-translate-y-full');
+                        navbar.classList.remove('translate-y-0');
+                    } else {
+                        // Scrolling up - show navbar
+                        navbar.classList.remove('-translate-y-full');
+                        navbar.classList.add('translate-y-0');
+                    }
+                } else {
+                    // Always show navbar when near top
+                    navbar.classList.remove('-translate-y-full');
+                    navbar.classList.add('translate-y-0');
+                }
+                
+                lastScrollTop = scrollTop;
+            }
+            
+            // Add scroll event listener with throttling
+            window.addEventListener('scroll', throttle(handleScroll, 10));
+            
+            // Show navbar on page load
+            navbar.classList.add('translate-y-0');
+        });
+
+        // Cart functionality
+        class CartManager {
+            constructor() {
+                this.cart = this.loadCart();
+                this.products = {}; // Store product details
+                this.updateCartDisplay();
+                this.bindEvents();
+            }
+
+            loadCart() {
+                const cart = localStorage.getItem('tac_cart');
+                return cart ? JSON.parse(cart) : {};
+            }
+
+            saveCart() {
+                localStorage.setItem('tac_cart', JSON.stringify(this.cart));
+                this.updateCartDisplay();
+            }
+
+            addToCart(productId, quantity = 1, productData = null) {
+                if (this.cart[productId]) {
+                    this.cart[productId] += quantity;
+                } else {
+                    this.cart[productId] = quantity;
+                }
+                
+                if (productData) {
+                    this.products[productId] = productData;
+                }
+                
+                this.saveCart();
+                this.showCartNotification();
+            }
+
+            removeFromCart(productId) {
+                delete this.cart[productId];
+                delete this.products[productId];
+                this.saveCart();
+            }
+
+            updateQuantity(productId, quantity) {
+                if (quantity <= 0) {
+                    this.removeFromCart(productId);
+                } else {
+                    this.cart[productId] = quantity;
+                    this.saveCart();
+                }
+            }
+
+            getCartCount() {
+                return Object.values(this.cart).reduce((sum, qty) => sum + qty, 0);
+            }
+
+            getCartTotal() {
+                let total = 0;
+                for (const [productId, quantity] of Object.entries(this.cart)) {
+                    if (this.products[productId]) {
+                        total += this.products[productId].price * quantity;
+                    }
+                }
+                return total;
+            }
+
+            updateCartDisplay() {
+                const count = this.getCartCount();
+                const countElement = document.getElementById('cart-count');
+                const itemsElement = document.getElementById('cart-items');
+                const footerElement = document.getElementById('cart-footer');
+                const totalElement = document.getElementById('cart-total-amount');
+
+                countElement.textContent = count;
+
+                if (count === 0) {
+                    itemsElement.innerHTML = `
+                        <div class="text-center py-12">
+                            <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">Your cart is empty</p>
+                            <p class="text-sm text-gray-400 mt-2">Add some beautiful jewellery to get started</p>
+                        </div>
+                    `;
+                    footerElement.classList.add('hidden');
+                } else {
+                    this.renderCartItems(itemsElement);
+                    totalElement.textContent = `KES ${this.getCartTotal().toFixed(2)}`;
+                    footerElement.classList.remove('hidden');
+                }
+            }
+
+            renderCartItems(container) {
+                let html = '';
+                for (const [productId, quantity] of Object.entries(this.cart)) {
+                    const product = this.products[productId];
+                    if (product) {
+                        html += `
+                            <div class="flex items-center space-x-4 py-4 border-b border-gray-100 last:border-b-0">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-gem text-gold-400 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900 text-sm">${product.name}</h4>
+                                    <p class="text-xs text-gray-500">${product.material} • ${product.carat || 'N/A'}</p>
+                                    <p class="text-sm font-semibold text-gold-600">KES ${product.price.toFixed(2)}</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="cartManager.updateQuantity('${productId}', ${quantity - 1})" class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs hover:bg-gray-300 transition-colors">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="w-8 text-center text-sm font-medium">${quantity}</span>
+                                    <button onclick="cartManager.updateQuantity('${productId}', ${quantity + 1})" class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs hover:bg-gray-300 transition-colors">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <button onclick="cartManager.removeFromCart('${productId}')" class="text-gray-400 hover:text-red-500 transition-colors">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+                container.innerHTML = html;
+            }
+
+            showCartNotification() {
+                // Create a temporary notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-20 right-6 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up';
+                notification.innerHTML = '<i class="fas fa-check mr-2"></i>Added to cart!';
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            openCart() {
+                document.getElementById('cart-sidebar').classList.remove('translate-x-full');
+                document.getElementById('cart-overlay').classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            closeCart() {
+                document.getElementById('cart-sidebar').classList.add('translate-x-full');
+                document.getElementById('cart-overlay').classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            bindEvents() {
+                // Cart button
+                document.getElementById('cart-button').addEventListener('click', () => {
+                    this.openCart();
+                });
+
+                // Close cart button
+                document.getElementById('close-cart').addEventListener('click', () => {
+                    this.closeCart();
+                });
+
+                // Overlay click
+                document.getElementById('cart-overlay').addEventListener('click', () => {
+                    this.closeCart();
+                });
+
+                // Continue shopping button
+                document.querySelector('#cart-footer button').addEventListener('click', () => {
+                    this.closeCart();
+                });
+
+                // Bind add to cart buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.matches('[data-add-to-cart]')) {
+                        e.preventDefault();
+                        const productId = e.target.dataset.productId;
+                        const quantity = parseInt(e.target.dataset.quantity) || 1;
+                        const productData = e.target.dataset.productData ? JSON.parse(e.target.dataset.productData) : null;
+                        this.addToCart(productId, quantity, productData);
+                    }
+                });
+            }
+        }
+
+        // Initialize cart manager
+        const cartManager = new CartManager();
+
+        // Quick Add Modal functionality
+        class QuickAddModal {
+            constructor() {
+                this.currentProduct = null;
+                this.quantity = 1;
+                this.bindEvents();
+            }
+
+            open(productData) {
+                console.log('QuickAddModal.open called with:', productData);
+                this.currentProduct = productData;
+                this.quantity = 1;
+                this.updateModalContent();
+                const modal = document.getElementById('quick-add-modal');
+                const content = document.getElementById('modal-content');
+                if (modal && content) {
+                    modal.classList.remove('hidden');
+                    content.classList.remove('scale-95');
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    console.error('Modal elements not found');
+                }
+            }
+
+            close() {
+                document.getElementById('quick-add-modal').classList.add('hidden');
+                document.getElementById('modal-content').classList.add('scale-95');
+                document.body.classList.remove('overflow-hidden');
+                this.currentProduct = null;
+                this.quantity = 1;
+            }
+
+            updateModalContent() {
+                if (!this.currentProduct) return;
+
+                const productInfo = document.getElementById('modal-product-info');
+                productInfo.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="w-20 h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-gem text-gold-400 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-serif font-bold text-gray-900 text-lg">${this.currentProduct.name}</h4>
+                            <p class="text-sm text-gray-600 mb-2">${this.currentProduct.short_description}</p>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                                    <i class="fas fa-gem mr-1"></i>${this.currentProduct.material}
+                                </span>
+                                ${this.currentProduct.carat ? `<span class="text-xs bg-gold-100 text-gold-700 px-2 py-1 rounded-full">${this.currentProduct.carat}</span>` : ''}
+                            </div>
+                            <p class="text-xl font-bold text-gold-600">${this.currentProduct.price_display}</p>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('quantity-display').textContent = this.quantity;
+                document.getElementById('view-product-btn').onclick = () => {
+                    window.location.href = this.currentProduct.detail_url;
+                };
+            }
+
+            increaseQuantity() {
+                this.quantity++;
+                document.getElementById('quantity-display').textContent = this.quantity;
+            }
+
+            decreaseQuantity() {
+                if (this.quantity > 1) {
+                    this.quantity--;
+                    document.getElementById('quantity-display').textContent = this.quantity;
+                }
+            }
+
+            addToCart() {
+                if (this.currentProduct) {
+                    cartManager.addToCart(
+                        this.currentProduct.id,
+                        this.quantity,
+                        {
+                            name: this.currentProduct.name,
+                            price: this.currentProduct.price_cents / 100,
+                            material: this.currentProduct.material,
+                            carat: this.currentProduct.carat
+                        }
+                    );
+                    this.close();
+                }
+            }
+
+            bindEvents() {
+                // Close modal buttons
+                document.getElementById('close-modal').addEventListener('click', () => {
+                    this.close();
+                });
+
+                document.getElementById('quick-add-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'quick-add-modal') {
+                        this.close();
+                    }
+                });
+
+                // Quantity controls
+                document.getElementById('increase-qty').addEventListener('click', () => {
+                    this.increaseQuantity();
+                });
+
+                document.getElementById('decrease-qty').addEventListener('click', () => {
+                    this.decreaseQuantity();
+                });
+
+                // Add to cart button
+                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+                    this.addToCart();
+                });
+            }
+        }
+
+        // Initialize quick add modal
+        const quickAddModal = new QuickAddModal();
+
+        // Product Detail Modal functionality
+        class ProductDetailModal {
+            constructor() {
+                this.currentProduct = null;
+                this.quantity = 1;
+                this.bindEvents();
+            }
+
+            open(productData) {
+                console.log('ProductDetailModal.open called with:', productData);
+                this.currentProduct = productData;
+                this.quantity = 1;
+                this.updateModalContent();
+                const modal = document.getElementById('product-detail-modal');
+                const content = document.getElementById('detail-modal-content');
+                if (modal && content) {
+                    modal.classList.remove('hidden');
+                    content.classList.remove('scale-95');
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    console.error('Product detail modal elements not found');
+                }
+            }
+
+            close() {
+                document.getElementById('product-detail-modal').classList.add('hidden');
+                document.getElementById('detail-modal-content').classList.add('scale-95');
+                document.body.classList.remove('overflow-hidden');
+                this.currentProduct = null;
+                this.quantity = 1;
+            }
+
+            updateModalContent() {
+                if (!this.currentProduct) return;
+
+                const productContent = document.getElementById('product-detail-content');
+                productContent.innerHTML = `
+                    <!-- Product Image -->
+                    <div class="space-y-4">
+                        <div class="aspect-square bg-gradient-to-br from-gold-100 to-gold-200 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-gem text-gold-400 text-6xl"></i>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-gem text-gray-400 text-2xl"></i>
+                            </div>
+                            <div class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-gem text-gray-400 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="space-y-6">
+                        <div>
+                            <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">${this.currentProduct.name}</h1>
+                            <p class="text-lg text-gray-600">${this.currentProduct.short_description}</p>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="flex items-center space-x-4">
+                            <span class="text-3xl font-bold text-gold-600">${this.currentProduct.price}</span>
+                            ${this.currentProduct.compare_price ? `<span class="text-lg text-gray-500 line-through">${this.currentProduct.compare_price}</span>` : ''}
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500">Material</span>
+                                    <p class="text-gray-900">${this.currentProduct.material}</p>
+                                </div>
+                                ${this.currentProduct.carat ? `
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500 ">Carat</span>
+                                    <p class="text-gray-900 ">${this.currentProduct.carat}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${this.currentProduct.stone_type ? `
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500 ">Stone Type</span>
+                                    <p class="text-gray-900 ">${this.currentProduct.stone_type}</p>
+                                </div>
+                                ${this.currentProduct.stone_count ? `
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500 ">Stone Count</span>
+                                    <p class="text-gray-900 ">${this.currentProduct.stone_count}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+                            ` : ''}
+                            
+                            ${this.currentProduct.size ? `
+                            <div>
+                                <span class="text-sm font-medium text-gray-500 ">Size</span>
+                                <p class="text-gray-900 ">${this.currentProduct.size}</p>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500 ">Category</span>
+                                    <p class="text-gray-900 ">${this.currentProduct.category}</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500 ">SKU</span>
+                                    <p class="text-gray-900 ">${this.currentProduct.sku}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 ">Description</h3>
+                            <p class="text-gray-600 leading-relaxed ">${this.currentProduct.description || 'No description available.'}</p>
+                        </div>
+
+                        <!-- Quantity and Add to Cart -->
+                        <div class="border-t pt-6">
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">Quantity</label>
+                                <div class="flex items-center space-x-4">
+                                    <button id="detail-decrease-qty" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                        <i class="fas fa-minus text-sm"></i>
+                                    </button>
+                                    <span id="detail-quantity-display" class="text-2xl font-bold text-gray-900 w-16 text-center ">1</span>
+                                    <button id="detail-increase-qty" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                        <i class="fas fa-plus text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button id="detail-add-to-cart-btn" class="w-full gradient-gold text-white py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-lg ">
+                                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Bind quantity controls
+                document.getElementById('detail-increase-qty').addEventListener('click', () => {
+                    this.increaseQuantity();
+                });
+
+                document.getElementById('detail-decrease-qty').addEventListener('click', () => {
+                    this.decreaseQuantity();
+                });
+
+                // Bind add to cart
+                document.getElementById('detail-add-to-cart-btn').addEventListener('click', () => {
+                    this.addToCart();
+                });
+            }
+
+            increaseQuantity() {
+                this.quantity++;
+                document.getElementById('detail-quantity-display').textContent = this.quantity;
+            }
+
+            decreaseQuantity() {
+                if (this.quantity > 1) {
+                    this.quantity--;
+                    document.getElementById('detail-quantity-display').textContent = this.quantity;
+                }
+            }
+
+            addToCart() {
+                if (this.currentProduct) {
+                    cartManager.addToCart(
+                        this.currentProduct.id,
+                        this.quantity,
+                        {
+                            name: this.currentProduct.name,
+                            price: this.currentProduct.price_cents / 100,
+                            material: this.currentProduct.material,
+                            carat: this.currentProduct.carat
+                        }
+                    );
+                    this.close();
+                }
+            }
+
+            bindEvents() {
+                // Close modal buttons
+                document.getElementById('close-detail-modal').addEventListener('click', () => {
+                    this.close();
+                });
+
+                document.getElementById('product-detail-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'product-detail-modal') {
+                        this.close();
+                    }
+                });
+            }
+        }
+
+        // Initialize product detail modal
+        const productDetailModal = new ProductDetailModal();
+
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('input[placeholder="Search jewellery..."]');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            window.location.href = `{% url 'catalog:product_list' %}?search=${encodeURIComponent(query)}`;
+                        }
+                    }
+                });
+            }
+
+            // Quick add to cart buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('[data-quick-add]') || e.target.closest('[data-quick-add]')) {
+                    e.preventDefault();
+                    const button = e.target.matches('[data-quick-add]') ? e.target : e.target.closest('[data-quick-add]');
+                    const productData = {
+                        id: button.dataset.productId,
+                        name: button.dataset.productName,
+                        short_description: button.dataset.productDescription,
+                        price_display: button.dataset.productPrice,
+                        price_cents: parseInt(button.dataset.productPriceCents),
+                        material: button.dataset.productMaterial,
+                        carat: button.dataset.productCarat,
+                        detail_url: button.dataset.productDetailUrl
+                    };
+                    console.log('Opening quick add modal with:', productData);
+                    quickAddModal.open(productData);
+                }
+            });
+
+            // View details buttons and product cards
+            document.addEventListener('click', function(e) {
+                // Check if clicked on a product card or view details button
+                const productCard = e.target.closest('[data-view-details]');
+                if (productCard && !e.target.matches('[data-quick-add]') && !e.target.closest('[data-quick-add]')) {
+                    e.preventDefault();
+                    const productData = {
+                        id: productCard.dataset.productId,
+                        name: productCard.dataset.productName,
+                        description: productCard.dataset.productDescription,
+                        short_description: productCard.dataset.productShortDescription,
+                        price: productCard.dataset.productPrice,
+                        price_cents: parseInt(productCard.dataset.productPriceCents),
+                        compare_price: productCard.dataset.productComparePrice,
+                        material: productCard.dataset.productMaterial,
+                        carat: productCard.dataset.productCarat,
+                        stone_type: productCard.dataset.productStoneType,
+                        stone_count: productCard.dataset.productStoneCount,
+                        size: productCard.dataset.productSize,
+                        category: productCard.dataset.productCategory,
+                        sku: productCard.dataset.productSku
+                    };
+                    console.log('Opening product detail modal with:', productData);
+                    productDetailModal.open(productData);
+                }
+            });
+
+            // WhatsApp functionality
+            const whatsappModal = document.getElementById('whatsapp-modal');
+            const whatsappButton = document.getElementById('whatsapp-button');
+            const closeWhatsappModal = document.getElementById('close-whatsapp-modal');
+            const cancelWhatsapp = document.getElementById('cancel-whatsapp');
+            const whatsappForm = document.getElementById('whatsapp-form');
+            const whatsappName = document.getElementById('whatsapp-name');
+            const whatsappMessage = document.getElementById('whatsapp-message');
+            const quickMessages = document.querySelectorAll('.quick-message');
+
+            // WhatsApp phone number (replace with your actual WhatsApp number)
+            const whatsappNumber = '254700000000'; // Replace with your WhatsApp number
+
+            // Open WhatsApp modal
+            whatsappButton.addEventListener('click', function() {
+                whatsappModal.classList.remove('hidden');
+                setTimeout(() => {
+                    whatsappModal.querySelector('.bg-white').classList.remove('scale-95');
+                    whatsappModal.querySelector('.bg-white').classList.add('scale-100');
+                }, 10);
+            });
+
+            // Close WhatsApp modal
+            function closeWhatsappModalFunc() {
+                whatsappModal.querySelector('.bg-white').classList.remove('scale-100');
+                whatsappModal.querySelector('.bg-white').classList.add('scale-95');
+                setTimeout(() => {
+                    whatsappModal.classList.add('hidden');
+                }, 300);
+            }
+
+            closeWhatsappModal.addEventListener('click', closeWhatsappModalFunc);
+            cancelWhatsapp.addEventListener('click', closeWhatsappModalFunc);
+
+            // Close modal when clicking outside
+            whatsappModal.addEventListener('click', function(e) {
+                if (e.target === whatsappModal) {
+                    closeWhatsappModalFunc();
+                }
+            });
+
+            // Quick message buttons
+            quickMessages.forEach(button => {
+                button.addEventListener('click', function() {
+                    const message = this.dataset.message;
+                    whatsappMessage.value = message;
+                });
+            });
+
+            // WhatsApp form submission
+            whatsappForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = whatsappName.value.trim();
+                const message = whatsappMessage.value.trim();
+                
+                if (!name || !message) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                // Create WhatsApp URL
+                const encodedMessage = encodeURIComponent(`${message}\n\nFrom: ${name}`);
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+                
+                // Open WhatsApp in new tab
+                window.open(whatsappUrl, '_blank');
+                
+                // Close modal
+                closeWhatsappModalFunc();
+                
+                // Reset form
+                whatsappForm.reset();
+            });
+        });
+        
+        // Custom Dropdown Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('[data-dropdown]');
+            
+            dropdowns.forEach(dropdown => {
+                const trigger = dropdown.querySelector('.dropdown-trigger');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                const options = dropdown.querySelectorAll('.dropdown-option');
+                const selectedText = dropdown.querySelector('.dropdown-selected');
+                
+                // Toggle dropdown
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = menu.classList.contains('show');
+                    
+                    // Close all other dropdowns
+                    dropdowns.forEach(otherDropdown => {
+                        if (otherDropdown !== dropdown) {
+                            otherDropdown.querySelector('.dropdown-menu').classList.remove('show');
+                            otherDropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                    
+                    // Toggle current dropdown
+                    if (isOpen) {
+                        menu.classList.remove('show');
+                        trigger.setAttribute('aria-expanded', 'false');
+                    } else {
+                        menu.classList.add('show');
+                        trigger.setAttribute('aria-expanded', 'true');
+                    }
+                });
+                
+                // Handle option selection
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const value = this.dataset.value;
+                        const text = this.innerHTML;
+                        
+                        // Update selected text
+                        selectedText.innerHTML = text;
+                        
+                        // Update selected state
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        // Close dropdown
+                        menu.classList.remove('show');
+                        trigger.setAttribute('aria-expanded', 'false');
+                        
+                        // Trigger custom event for sorting functionality
+                        const sortEvent = new CustomEvent('sortChanged', {
+                            detail: { value: value, text: text.trim() }
+                        });
+                        dropdown.dispatchEvent(sortEvent);
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        menu.classList.remove('show');
+                        trigger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                // Keyboard navigation
+                trigger.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        trigger.click();
+                    } else if (e.key === 'Escape') {
+                        menu.classList.remove('show');
+                        trigger.setAttribute('aria-expanded', 'false');
+                        trigger.focus();
+                    }
+                });
+                
+                // Handle arrow key navigation in menu
+                menu.addEventListener('keydown', function(e) {
+                    const currentOption = document.activeElement;
+                    const optionArray = Array.from(options);
+                    const currentIndex = optionArray.indexOf(currentOption);
+                    
+                    switch(e.key) {
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            const nextIndex = (currentIndex + 1) % optionArray.length;
+                            optionArray[nextIndex].focus();
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            const prevIndex = currentIndex <= 0 ? optionArray.length - 1 : currentIndex - 1;
+                            optionArray[prevIndex].focus();
+                            break;
+                        case 'Enter':
+                            e.preventDefault();
+                            currentOption.click();
+                            break;
+                        case 'Escape':
+                            menu.classList.remove('show');
+                            trigger.setAttribute('aria-expanded', 'false');
+                            trigger.focus();
+                            break;
+                    }
+                });
+                
+                // Make options focusable
+                options.forEach(option => {
+                    option.setAttribute('tabindex', '0');
+                });
+            });
+        });
+
+        // Floating WhatsApp Chat Button
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingWhatsAppButton = document.getElementById('floating-whatsapp-button');
+            
+            if (floatingWhatsAppButton) {
+                floatingWhatsAppButton.addEventListener('click', function() {
+                    // Replace with your actual WhatsApp number
+                    const phoneNumber = '+254700000000'; // Replace with your WhatsApp number
+                    const message = 'Hello! I\'m interested in your jewellery collection.';
+                    const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+                    
+                    window.open(whatsappUrl, '_blank');
+                });
+            }
+        });
+    </script>
+
+    <!-- Floating WhatsApp Chat Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="floating-whatsapp-button" class="w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center group floating-whatsapp">
+            {% hgi_stroke name="bubble-chat" size="24" color="#ffffff" stroke_width="2" %}
+            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">1</span>
+        </button>
+    </div>
 </body>
 </html>

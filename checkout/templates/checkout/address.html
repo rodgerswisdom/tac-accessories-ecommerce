@@ -1,10 +1,192 @@
 {% extends "base.html" %}
-{% block title %}Address · tac-ecommerce{% endblock %}
+
+{% block title %}Delivery Address - TAC Jewellery{% endblock %}
+
 {% block content %}
-<h1 class="text-xl font-semibold mb-4">Delivery Address</h1>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="px-4 py-2 bg-black text-white rounded">Continue</button>
-</form>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <!-- Page Header -->
+  <div class="mb-6 sm:mb-8">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4">Delivery Address</h1>
+    <p class="text-base sm:text-lg lg:text-xl text-gray-600">Where should we deliver your beautiful jewellery?</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+    <!-- Address Form -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8">
+        <form method="post" class="space-y-4 sm:space-y-6">
+          {% csrf_token %}
+          
+          <!-- Full Name -->
+          <div>
+            <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-user mr-2"></i>Full Name *
+            </label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.full_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-phone mr-2"></i>Phone Number *
+            </label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.phone.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Address Line 1 -->
+          <div>
+            <label for="{{ form.line1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-map-marker-alt mr-2"></i>Address Line 1 *
+            </label>
+            {{ form.line1 }}
+            {% if form.line1.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.line1.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Address Line 2 -->
+          <div>
+            <label for="{{ form.line2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-building mr-2"></i>Address Line 2
+            </label>
+            {{ form.line2 }}
+            {% if form.line2.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.line2.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <!-- City and County -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label for="{{ form.city.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-city mr-2"></i>City *
+              </label>
+              {{ form.city }}
+              {% if form.city.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.city.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.county.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-map mr-2"></i>County *
+              </label>
+              {{ form.county }}
+              {% if form.county.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.county.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Postal Code and Country -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label for="{{ form.postal_code.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-mail-bulk mr-2"></i>Postal Code
+              </label>
+              {{ form.postal_code }}
+              {% if form.postal_code.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.postal_code.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.country.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-flag mr-2"></i>Country *
+              </label>
+              {{ form.country }}
+              {% if form.country.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.country.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-sticky-note mr-2"></i>Delivery Notes
+            </label>
+            {{ form.notes }}
+            {% if form.notes.errors %}
+              <p class="mt-1 text-sm text-red-600">{{ form.notes.errors.0 }}</p>
+            {% endif %}
+            <p class="mt-1 text-sm text-gray-500">Any special delivery instructions?</p>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4 sm:pt-6">
+            <button type="submit" 
+                    class="w-full gradient-gold text-white py-3 sm:py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-base sm:text-lg">
+              <i class="fas fa-arrow-right mr-2"></i>
+              Continue to Payment
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 sticky top-6">
+        <h2 class="text-lg sm:text-xl font-serif font-bold text-gray-900 mb-4 sm:mb-6">Order Summary</h2>
+        
+        <!-- Cart Items -->
+        <div class="space-y-4 mb-6">
+          {% for item in cart_items %}
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-gold-100 to-gold-200 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-gem text-gold-400"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h4 class="text-sm font-medium text-gray-900 truncate">{{ item.product.name }}</h4>
+              <p class="text-xs text-gray-500">Qty: {{ item.qty }}</p>
+            </div>
+            <span class="text-sm font-semibold text-gold-600">KES {{ item.subtotal|floatformat:2 }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Totals -->
+        <div class="border-t border-gray-200 pt-4 space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Subtotal</span>
+            <span class="font-medium">KES {{ cart_total|floatformat:2 }}</span>
+          </div>
+          
+          <div class="flex justify-between">
+            <span class="text-gray-600">Shipping</span>
+            <span class="font-medium text-green-600">Free</span>
+          </div>
+          
+          <div class="flex justify-between">
+            <span class="text-gray-600">Tax</span>
+            <span class="font-medium">KES 0.00</span>
+          </div>
+          
+          <div class="border-t border-gray-200 pt-3">
+            <div class="flex justify-between">
+              <span class="text-lg font-semibold text-gray-900">Total</span>
+              <span class="text-xl font-bold text-gold-600">KES {{ cart_total|floatformat:2 }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Security Notice -->
+        <div class="mt-6 p-3 bg-green-50 rounded-lg">
+          <div class="flex items-center">
+            <i class="fas fa-shield-alt text-green-600 mr-2"></i>
+            <span class="text-sm text-green-700">Your information is secure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

@@ -1,24 +1,240 @@
 {% extends "base.html" %}
-{% block title %}Cart · tac-ecommerce{% endblock %}
+
+{% block title %}Shopping Cart - TAC Jewellery{% endblock %}
+
 {% block content %}
-<h1 class="text-xl font-semibold mb-4">Your Cart</h1>
-{% if items %}
-  <table class="bg-white rounded">
-    <thead><tr><th>Product</th><th>Qty</th><th>Subtotal (KES)</th><th></th></tr></thead>
-    <tbody>
-      {% for it in items %}
-      <tr>
-        <td>{{ it.product.name }}</td>
-        <td>{{ it.qty }}</td>
-        <td>{{ it.subtotal|floatformat:2 }}</td>
-        <td><a class="text-red-600" href="{% url 'cart:remove' it.product.slug %}">Remove</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <div class="mt-4 font-semibold">Total: KES {{ total|floatformat:2 }}</div>
-  <a class="mt-4 inline-block px-4 py-2 bg-black text-white rounded" href="{% url 'checkout:address' %}">Checkout</a>
-{% else %}
-  <p>Your cart is empty.</p>
-{% endif %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <!-- Page Header -->
+  <div class="mb-6 sm:mb-8">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4">Shopping Cart</h1>
+    <p class="text-base sm:text-lg lg:text-xl text-gray-600">Review your selected jewellery items</p>
+  </div>
+
+  {% if items %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+      <!-- Cart Items -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-serif font-bold text-gray-900">Cart Items ({{ cart_items }} items, {{ cart_count }} total)</h2>
+          </div>
+          
+          <div class="divide-y divide-gray-200">
+            {% for it in items %}
+            <div class="p-6">
+              <div class="flex items-center space-x-4">
+                <!-- Product Image -->
+                <div class="w-20 h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                  {% hgi_stroke name="diamond-02" size="24" color="#f59e0b" stroke_width="2" %}
+                </div>
+                
+                <!-- Product Info -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-lg font-serif font-semibold text-gray-900 mb-1">{{ it.product.name }}</h3>
+                  <p class="text-sm text-gray-600 mb-2">{{ it.product.short_description }}</p>
+                  <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <span class="flex items-center">
+                      {% hgi_stroke name="diamond-02" size="12" color="#6b7280" stroke_width="2" %}
+                      <span class="ml-1">{{ it.product.get_material_display }}</span>
+                    </span>
+                    {% if it.product.carat %}
+                      <span>{{ it.product.carat }}</span>
+                    {% endif %}
+                    <span>SKU: {{ it.product.sku }}</span>
+                  </div>
+                </div>
+                
+                <!-- Quantity Controls -->
+                <div class="flex items-center space-x-3">
+                  <div class="flex items-center border border-gray-300 rounded-lg">
+                    <button class="w-10 h-10 flex items-center justify-center hover:bg-gray-50 transition-colors" 
+                            onclick="updateQuantity('{{ it.product.slug }}', {{ it.qty|add:'-1' }})">
+                      {% hgi_stroke name="remove-02" size="12" color="#374151" stroke_width="2" %}
+                    </button>
+                    <span class="w-12 text-center font-medium">{{ it.qty }}</span>
+                    <button class="w-10 h-10 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                            onclick="updateQuantity('{{ it.product.slug }}', {{ it.qty|add:'1' }})">
+                      {% hgi_stroke name="add-02" size="12" color="#374151" stroke_width="2" %}
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Price -->
+                <div class="text-right">
+                  <p class="text-lg font-bold text-gold-600">KES {{ it.subtotal|floatformat:2 }}</p>
+                  <p class="text-sm text-gray-500">KES {{ it.product.price_display|slice:"4:" }} each</p>
+                </div>
+                
+                <!-- Remove Button -->
+                <button onclick="removeItem('{{ it.product.slug }}')" 
+                        class="text-gray-400 hover:text-red-500 transition-colors p-2">
+                  {% hgi_stroke name="delete-04" size="16" color="#9ca3af" stroke_width="2" %}
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Continue Shopping -->
+        <div class="mt-6">
+          <a href="{% url 'catalog:product_list' %}" 
+             class="inline-flex items-center text-gold-600 hover:text-gold-700 transition-colors">
+            {% hgi_stroke name="arrow-left-02" size="16" color="#d97706" stroke_width="2" %}
+            <span class="ml-2">Continue Shopping</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Order Summary -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
+          <h2 class="text-xl font-serif font-bold text-gray-900 mb-6">Order Summary</h2>
+          
+          <div class="space-y-4">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal</span>
+              <span class="font-medium">KES {{ total|floatformat:2 }}</span>
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-gray-600">Shipping</span>
+              <span class="font-medium text-green-600">Free</span>
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-gray-600">Tax</span>
+              <span class="font-medium">KES 0.00</span>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex justify-between">
+                <span class="text-lg font-semibold text-gray-900">Total</span>
+                <span class="text-xl font-bold text-gold-600">KES {{ total|floatformat:2 }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Checkout Button -->
+          <a href="{% url 'checkout:address' %}" 
+             class="w-full gradient-gold text-white py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-center block mt-6 flex items-center justify-center">
+            {% hgi_stroke name="lock-key" size="18" color="#ffffff" stroke_width="2" %}
+            <span class="ml-2">Proceed to Checkout</span>
+          </a>
+          
+          <!-- Security Notice -->
+          <div class="mt-4 p-3 bg-green-50 rounded-lg">
+            <div class="flex items-center">
+              {% hgi_stroke name="shield-energy" size="16" color="#16a34a" stroke_width="2" %}
+              <span class="ml-2 text-sm text-green-700">Secure checkout with SSL encryption</span>
+            </div>
+          </div>
+          
+          <!-- Payment Methods -->
+          <div class="mt-6">
+            <p class="text-sm text-gray-600 mb-3">We accept:</p>
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                <i class="fas fa-credit-card text-white text-xs"></i>
+              </div>
+              <div class="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
+                <i class="fas fa-mobile-alt text-white text-xs"></i>
+              </div>
+              <div class="w-8 h-8 bg-yellow-600 rounded flex items-center justify-center">
+                <i class="fas fa-money-bill-wave text-white text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <!-- Empty Cart -->
+    <div class="text-center py-16">
+      <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        {% hgi_stroke name="shopping-cart-02" size="40" color="#9ca3af" stroke_width="2" %}
+      </div>
+      <h2 class="text-2xl font-serif font-bold text-gray-900 mb-4">Your cart is empty</h2>
+      <p class="text-gray-600 mb-8">Looks like you haven't added any beautiful jewellery to your cart yet.</p>
+      <a href="{% url 'catalog:product_list' %}" 
+         class="gradient-gold text-white px-8 py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium inline-flex items-center">
+        {% hgi_stroke name="diamond-02" size="18" color="#ffffff" stroke_width="2" %}
+        <span class="ml-2">Start Shopping</span>
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function updateCartCount() {
+    // Fetch current cart count from server
+    fetch('/cart/count/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.cart_count !== undefined) {
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = data.cart_count;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating cart count:', error);
+    });
+}
+
+function updateQuantity(slug, newQuantity) {
+    if (newQuantity <= 0) {
+        removeItem(slug);
+        return;
+    }
+    
+    fetch(`/cart/update/${slug}/${newQuantity}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart count in navigation
+            updateCartCount();
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function removeItem(slug) {
+    if (confirm('Are you sure you want to remove this item from your cart?')) {
+        fetch(`/cart/remove/${slug}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update cart count in navigation
+                updateCartCount();
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
+</script>
 {% endblock %}

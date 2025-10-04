@@ -11,6 +11,12 @@ def product_list(request, slug=None):
     q = request.GET.get("q", "").strip()
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(category__name__icontains=q))
+    
+    # Handle sorting
+    sort = request.GET.get("sort", "created_at")
+    if sort:
+        qs = qs.order_by(sort)
+    
     ctx = {"products": qs, "active_category": category, "categories": Category.objects.all()}
     if request.headers.get("HX-Request"):
         return render(request, "catalog/_product_grid.html", ctx)
