@@ -26,6 +26,11 @@ urlpatterns = [
     path('cart/', views.CartView.as_view(), name='cart'),
     path('cart/to-order/', views.CartToOrderView.as_view(), name='cart-to-order'),
     
+    # Pricing and timezone endpoints
+    path('timezone/', views.TimezoneDetectionView.as_view(), name='timezone'),
+    path('prices/', views.PriceResolutionView.as_view(), name='prices'),
+    path('currency-preference/', views.CurrencyPreferenceView.as_view(), name='currency-preference'),
+    
     # Include router URLs
     path('', include(router.urls)),
 ]

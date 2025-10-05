@@ -1,0 +1,780 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Product - TAC Jewellery{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">Create New Product</h1>
+    <p class="text-gray-600">Add a new jewellery product to your collection</p>
+  </div>
+
+  <!-- Full-width form content (steps stacked vertically) -->
+
+  <!-- Form -->
+  <form method="post" enctype="multipart/form-data" id="product-form" class="space-y-8">
+    {% csrf_token %}
+    
+    <!-- Step 1: Basic Information -->
+    <div class="form-step bg-white rounded-2xl shadow-lg p-8" 
+         data-step="1" 
+         role="tabpanel" 
+         aria-labelledby="step-1-tab"
+         id="step-1-panel">
+      <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6 flex items-center">
+        <span class="flex-shrink-0 mr-3">{% hgi_stroke name="diamond-02" size="24" color="#d97706" stroke_width="2" %}</span>
+        Basic Information
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            Product Name *
+          </label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</div>
+          {% endif %}
+          <p class="mt-1 text-sm text-gray-500">{{ form.name.help_text }}</p>
+        </div>
+        
+        <div class="md:col-span-2">
+          <label for="{{ form.short_description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            Short Description
+          </label>
+          {{ form.short_description }}
+          {% if form.short_description.errors %}
+            <div class="mt-1 text-sm text-red-600">{{ form.short_description.errors.0 }}</div>
+          {% endif %}
+          <p class="mt-1 text-sm text-gray-500">{{ form.short_description.help_text }}</p>
+        </div>
+        
+        <div class="md:col-span-2">
+          <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            Category *
+          </label>
+          {{ form.category }}
+          {% if form.category.errors %}
+            <div class="mt-1 text-sm text-red-600">{{ form.category.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {% for tag in tags %}
+              <label class="flex items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="checkbox" name="tags" value="{{ tag.id }}" class="mr-2">
+                <span class="text-sm">{{ tag.name }}</span>
+              </label>
+            {% endfor %}
+          </div>
+          <p class="mt-1 text-sm text-gray-500">{{ form.tags.help_text }}</p>
+        </div>
+      </div>
+      
+      
+    </div>
+
+    <!-- Step 2: Product Details -->
+    <div class="form-step bg-white rounded-2xl shadow-lg p-8" 
+         data-step="2" 
+         role="tabpanel" 
+         aria-labelledby="step-2-tab"
+         id="step-2-panel">
+      <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6 flex items-center">
+        <span class="flex-shrink-0 mr-3">{% hgi_stroke name="diamond-02" size="24" color="#d97706" stroke_width="2" %}</span>
+        Product Details
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Pricing -->
+        <div class="md:col-span-2">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Pricing</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="{{ form.price_cents.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Price (KES) *
+              </label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">KES</span>
+                <input type="number" name="price_cents" id="{{ form.price_cents.id_for_label }}" 
+                       class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-200"
+                       placeholder="0" step="1" min="1">
+              </div>
+              {% if form.price_cents.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.price_cents.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">Enter price in cents (e.g., 50000 for KES 500.00)</p>
+            </div>
+            
+            <div>
+              <label for="{{ form.compare_price_cents.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Compare Price (KES)
+              </label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">KES</span>
+                <input type="number" name="compare_price_cents" id="{{ form.compare_price_cents.id_for_label }}" 
+                       class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-200"
+                       placeholder="0" step="1" min="1">
+              </div>
+              {% if form.compare_price_cents.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.compare_price_cents.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">Original price for showing discounts</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Jewellery Specifications -->
+        <div class="md:col-span-2">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Jewellery Specifications</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="{{ form.material.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Material *
+              </label>
+              {{ form.material }}
+              {% if form.material.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.material.errors.0 }}</div>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.carat.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Carat/Purity
+              </label>
+              {{ form.carat }}
+              {% if form.carat.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.carat.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">{{ form.carat.help_text }}</p>
+            </div>
+            
+            <div>
+              <label for="{{ form.stone_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Stone Type
+              </label>
+              {{ form.stone_type }}
+              {% if form.stone_type.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.stone_type.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">{{ form.stone_type.help_text }}</p>
+            </div>
+            
+            <div>
+              <label for="{{ form.stone_count.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Stone Count
+              </label>
+              {{ form.stone_count }}
+              {% if form.stone_count.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.stone_count.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">{{ form.stone_count.help_text }}</p>
+            </div>
+            
+            <div class="md:col-span-2">
+              <label for="{{ form.size.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Size
+              </label>
+              {{ form.size }}
+              {% if form.size.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.size.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">{{ form.size.help_text }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Inventory -->
+        <div class="md:col-span-2">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Inventory</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label for="{{ form.sku.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                SKU
+              </label>
+              {{ form.sku }}
+              {% if form.sku.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.sku.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">{{ form.sku.help_text }}</p>
+            </div>
+            
+            <div>
+              <label for="{{ form.stock_quantity.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Stock Quantity
+              </label>
+              {{ form.stock_quantity }}
+              {% if form.stock_quantity.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.stock_quantity.errors.0 }}</div>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.low_stock_threshold.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Low Stock Alert
+              </label>
+              {{ form.low_stock_threshold }}
+              {% if form.low_stock_threshold.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.low_stock_threshold.errors.0 }}</div>
+              {% endif %}
+              <p class="mt-1 text-sm text-gray-500">{{ form.low_stock_threshold.help_text }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="md:col-span-2">
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            Detailed Description
+          </label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</div>
+          {% endif %}
+          <p class="mt-1 text-sm text-gray-500">{{ form.description.help_text }}</p>
+        </div>
+      </div>
+      
+      
+    </div>
+
+    <!-- Step 3: Images -->
+    <div class="form-step bg-white rounded-2xl shadow-lg p-8" 
+         data-step="3" 
+         role="tabpanel" 
+         aria-labelledby="step-3-tab"
+         id="step-3-panel">
+      <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6 flex items-center">
+        <span class="flex-shrink-0 mr-3">{% hgi_stroke name="diamond-02" size="24" color="#d97706" stroke_width="2" %}</span>
+        Product Images
+      </h2>
+      
+      <div class="space-y-8">
+        <!-- Main Image -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Main Product Image</h3>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-8 text-center hover:border-gold-500 transition-colors" 
+               id="main-image-dropzone"
+               role="button"
+               tabindex="0"
+               aria-label="Main product image upload area"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('main-image-input').click();}">
+            <div class="space-y-4">
+              <div class="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                {% hgi_stroke name="diamond-02" size="32" color="#9ca3af" stroke_width="2" %}
+              </div>
+              <div>
+                <p class="text-lg font-medium text-gray-900">Drop your main image here</p>
+                <p class="text-sm text-gray-500">or click to browse</p>
+              </div>
+              <input type="file" name="image" id="main-image-input" accept="image/*" class="hidden" aria-label="Main product image file input">
+              <button type="button" class="w-full sm:w-auto px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors" onclick="document.getElementById('main-image-input').click()">
+                Choose File
+              </button>
+            </div>
+          </div>
+          <div id="main-image-preview" class="mt-4 hidden">
+            <img id="main-image-preview-img" src="" alt="Main image preview" class="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-lg">
+            <button type="button" class="ml-0 sm:ml-2 mt-2 sm:mt-0 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors" onclick="removeMainImage()">
+              Remove
+            </button>
+          </div>
+        </div>
+        
+        <!-- Gallery Images -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Images</h3>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-8 text-center hover:border-gold-500 transition-colors" 
+               id="gallery-dropzone"
+               role="button"
+               tabindex="0"
+               aria-label="Gallery images upload area"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('gallery-images-input').click();}">
+            <div class="space-y-4">
+              <div class="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                {% hgi_stroke name="diamond-02" size="32" color="#9ca3af" stroke_width="2" %}
+              </div>
+              <div>
+                <p class="text-lg font-medium text-gray-900">Drop multiple images here</p>
+                <p class="text-sm text-gray-500">or click to browse multiple files</p>
+              </div>
+              <input type="file" name="gallery_images" id="gallery-images-input" accept="image/*" multiple class="hidden" aria-label="Gallery images file input">
+              <button type="button" class="w-full sm:w-auto px-4 py-2 bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors" onclick="document.getElementById('gallery-images-input').click()">
+                Choose Files
+              </button>
+            </div>
+          </div>
+          <div id="gallery-preview" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 hidden">
+            <!-- Gallery images will be added here -->
+          </div>
+        </div>
+      </div>
+      
+      
+    </div>
+
+    </div> <!-- end right content -->
+  </div> <!-- end grid layout -->
+
+    <!-- Bottom actions inside form (non-sticky, themed) -->
+    <div class="mt-6">
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button type="button" id="open-review-modal" class="w-full sm:w-auto px-6 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600">Review & Submit</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Review Modal -->
+<div id="review-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/40"></div>
+  <div class="relative mx-auto max-w-3xl bg-white rounded-2xl shadow-xl mt-20 p-6">
+    <div class="flex items-start justify-between mb-4">
+      <h3 class="text-xl font-serif font-bold text-gray-900">Review & Confirm</h3>
+      <button type="button" id="close-review-modal" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+    <div id="modal-review-content" class="space-y-6">
+      <!-- Populated dynamically -->
+    </div>
+    <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-end">
+      <button type="button" id="edit-modal-button" class="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Continue Editing</button>
+      <button type="button" id="confirm-submit-button" class="w-full sm:w-auto px-6 py-3 bg-gold-500 text-white rounded-lg hover:bg-gold-600">Submit Product</button>
+    </div>
+  </div>
+  
+  <!-- Accessibility focus sentinel -->
+  <button class="sr-only" aria-hidden="true">end</button>
+  
+  <!-- Backdrop click close area -->
+  <button type="button" id="review-modal-backdrop" class="absolute inset-0 w-full h-full" aria-hidden="true" tabindex="-1"></button>
+</div>
+
+<!-- JavaScript for form functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let currentStep = 1;
+  const totalSteps = 3;
+  
+  // Step navigation
+  function showStep(step) {
+    console.log('Showing step:', step);
+
+    // Scroll to target step smoothly (keep sections mounted)
+    const currentStepElement = document.querySelector(`[data-step="${step}"]`);
+    if (currentStepElement) {
+      currentStepElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Update progress indicators
+    document.querySelectorAll('.step-indicator').forEach((el, index) => {
+      if (index + 1 <= step) {
+        el.classList.remove('bg-gray-300', 'text-gray-600');
+        el.classList.add('bg-gold-500', 'text-white');
+      } else {
+        el.classList.remove('bg-gold-500', 'text-white');
+        el.classList.add('bg-gray-300', 'text-gray-600');
+      }
+    });
+    
+    currentStep = step;
+  }
+  
+  // Next step buttons
+  document.querySelectorAll('.next-step').forEach(btn => {
+    btn.addEventListener('click', function() {
+      console.log('Next step button clicked');
+      const nextStep = parseInt(this.dataset.next);
+      console.log('Next step:', nextStep, 'Current step:', currentStep);
+      
+      if (validateStep(currentStep)) {
+        console.log('Validation passed, showing step:', nextStep);
+        showStep(nextStep);
+        if (nextStep === 4) {
+          updateReview();
+        }
+      } else {
+        console.log('Validation failed');
+      }
+    });
+  });
+  
+  // Removed Previous step handlers (scroll-only flow)
+  
+  // Step validation
+  function validateStep(step, showErrors = true) {
+    let isValid = true;
+    const errorMessages = [];
+    
+    if (step === 1) {
+      const nameField = document.querySelector('input[name="name"]');
+      const categoryField = document.querySelector('select[name="category"]');
+      
+      if (nameField && !nameField.value.trim()) {
+        errorMessages.push('Please enter a product name.');
+        nameField.classList.add('border-red-500');
+        isValid = false;
+      } else {
+        nameField.classList.remove('border-red-500');
+      }
+      
+      if (categoryField && !categoryField.value) {
+        errorMessages.push('Please select a category.');
+        categoryField.classList.add('border-red-500');
+        isValid = false;
+      } else {
+        categoryField.classList.remove('border-red-500');
+      }
+    }
+    
+    if (step === 2) {
+      const priceField = document.querySelector('input[name="price_cents"]');
+      const materialField = document.querySelector('select[name="material"]');
+      
+      if (priceField && (!priceField.value || priceField.value < 1)) {
+        errorMessages.push('Please enter a valid price.');
+        priceField.classList.add('border-red-500');
+        isValid = false;
+      } else {
+        priceField.classList.remove('border-red-500');
+      }
+      
+      if (materialField && !materialField.value) {
+        errorMessages.push('Please select a material.');
+        materialField.classList.add('border-red-500');
+        isValid = false;
+      } else {
+        materialField.classList.remove('border-red-500');
+      }
+    }
+    
+    if (showErrors && errorMessages.length > 0) {
+      showErrorMessages(errorMessages);
+    }
+    
+    return isValid;
+  }
+  
+  function showErrorMessages(messages) {
+    // Create a nice error display instead of alert
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'mb-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+    errorDiv.innerHTML = `
+      <div class="flex items-center">
+        <span class="text-red-500 mr-2">⚠</span>
+        <strong class="text-red-800">Please fix the following errors:</strong>
+      </div>
+      <ul class="mt-2 text-red-700 list-disc list-inside">
+        ${messages.map(msg => `<li>${msg}</li>`).join('')}
+      </ul>
+    `;
+    
+    // Remove existing errors
+    const existingErrors = document.querySelectorAll('.form-errors');
+    existingErrors.forEach(error => error.remove());
+    
+    errorDiv.classList.add('form-errors');
+    document.querySelector('.form-step[data-step="' + currentStep + '"]').prepend(errorDiv);
+  }
+  
+  // Format price for display
+  function formatPrice(priceCents) {
+    return new Intl.NumberFormat('en-KE', {
+      style: 'currency',
+      currency: 'KES'
+    }).format(priceCents / 100);
+  }
+  
+  // Update review section
+  function updateReview() {
+    const reviewContent = document.getElementById('review-content');
+    const name = document.querySelector('input[name="name"]').value;
+    const shortDesc = document.querySelector('input[name="short_description"]').value;
+    const price = document.querySelector('input[name="price_cents"]').value;
+    const comparePrice = document.querySelector('input[name="compare_price_cents"]').value;
+    const material = document.querySelector('select[name="material"]').value;
+    const carat = document.querySelector('input[name="carat"]').value;
+    const category = document.querySelector('select[name="category"]');
+    const categoryText = category ? category.options[category.selectedIndex].text : 'Not specified';
+    
+    reviewContent.innerHTML = `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <strong>Name:</strong> ${name || 'Not specified'}
+        </div>
+        <div>
+          <strong>Category:</strong> ${categoryText}
+        </div>
+        <div>
+          <strong>Price:</strong> ${price ? formatPrice(price) : 'KES 0.00'}
+        </div>
+        <div>
+          <strong>Compare Price:</strong> ${comparePrice ? formatPrice(comparePrice) : 'Not set'}
+        </div>
+        <div>
+          <strong>Material:</strong> ${material || 'Not specified'}
+        </div>
+        <div>
+          <strong>Carat:</strong> ${carat || 'Not specified'}
+        </div>
+        <div class="md:col-span-2">
+          <strong>Description:</strong> ${shortDesc || 'No description provided'}
+        </div>
+      </div>
+    `;
+  }
+  
+  // Image upload functionality (with safety)
+  try { setupImageUpload(); } catch (e) { console.warn('Image upload init failed', e); }
+
+  // Enable/disable Review button based on validation
+  const reviewBtn = document.getElementById('open-review-modal');
+  function updateReviewButtonState() {
+    // Validate step 1 and 2 for minimal requirements
+    const validStep1 = validateStep(1, false);
+    const validStep2 = validateStep(2, false);
+    const isValid = validStep1 && validStep2;
+    if (!reviewBtn) return;
+    if (isValid) {
+      reviewBtn.classList.remove('bg-gray-200','text-gray-400','cursor-not-allowed','opacity-60');
+      reviewBtn.classList.add('bg-gold-500','text-white','hover:bg-gold-600','focus:ring-2','focus:ring-gold-500','focus:ring-offset-1','shadow');
+      reviewBtn.setAttribute('aria-disabled','false');
+      reviewBtn.disabled = false;
+    } else {
+      reviewBtn.classList.add('bg-gray-200','text-gray-400','cursor-not-allowed','opacity-60');
+      reviewBtn.classList.remove('bg-gold-500','text-white','hover:bg-gold-600','focus:ring-2','focus:ring-gold-500','focus:ring-offset-1','shadow');
+      reviewBtn.setAttribute('aria-disabled','true');
+      reviewBtn.disabled = true;
+    }
+  }
+
+  // Re-check on input changes
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('input', updateReviewButtonState);
+    el.addEventListener('change', updateReviewButtonState);
+  });
+  // Initial state
+  updateReviewButtonState();
+
+  // Build modal summary
+  function buildModalReviewContent() {
+    const container = document.getElementById('modal-review-content');
+    if (!container) return;
+    const getVal = (selector) => {
+      const el = document.querySelector(selector);
+      return el ? el.value : '';
+    };
+    const getSelectText = (selector) => {
+      const el = document.querySelector(selector);
+      if (!el || el.selectedIndex < 0) return '';
+      return el.options[el.selectedIndex].text;
+    };
+    const price = getVal('input[name="price_cents"]');
+    const comparePrice = getVal('input[name="compare_price_cents"]');
+    container.innerHTML = `
+      <div class="bg-gray-50 rounded-lg p-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><strong class="text-gray-800">Name:</strong> ${getVal('input[name="name"]') || '—'}</div>
+          <div><strong class="text-gray-800">Category:</strong> ${getSelectText('select[name="category"]') || '—'}</div>
+          <div><strong class="text-gray-800">Price:</strong> ${price ? formatPrice(price) : 'KES 0.00'}</div>
+          <div><strong class="text-gray-800">Compare Price:</strong> ${comparePrice ? formatPrice(comparePrice) : '—'}</div>
+          <div><strong class="text-gray-800">Material:</strong> ${getVal('select[name="material"]') || '—'}</div>
+          <div><strong class="text-gray-800">Carat:</strong> ${getVal('input[name="carat"]') || '—'}</div>
+          <div><strong class="text-gray-800">Stone Type:</strong> ${getVal('input[name="stone_type"]') || '—'}</div>
+          <div><strong class="text-gray-800">Stone Count:</strong> ${getVal('input[name="stone_count"]') || '0'}</div>
+          <div><strong class="text-gray-800">Size:</strong> ${getVal('input[name="size"]') || '—'}</div>
+          <div><strong class="text-gray-800">SKU:</strong> ${getVal('input[name="sku"]') || '—'}</div>
+          <div><strong class="text-gray-800">Stock Quantity:</strong> ${getVal('input[name="stock_quantity"]') || '0'}</div>
+          <div><strong class="text-gray-800">Low Stock Alert:</strong> ${getVal('input[name="low_stock_threshold"]') || '0'}</div>
+        </div>
+        <div class="mt-4">
+          <strong class="text-gray-800">Short Description:</strong>
+          <div class="text-gray-700">${getVal('input[name="short_description"]') || '—'}</div>
+        </div>
+        <div class="mt-3">
+          <strong class="text-gray-800">Description:</strong>
+          <div class="text-gray-700 whitespace-pre-line">${getVal('textarea[name="description"]') || '—'}</div>
+        </div>
+      </div>`;
+  }
+
+  // Modal open/close handlers
+  const openModalBtn = document.getElementById('open-review-modal');
+  const modal = document.getElementById('review-modal');
+  const closeModalBtn = document.getElementById('close-review-modal');
+  const closeBackdrop = document.getElementById('review-modal-backdrop');
+  const continueEditingBtn = document.getElementById('edit-modal-button');
+  const confirmSubmitBtn = document.getElementById('confirm-submit-button');
+
+  function openModal() {
+    modal.classList.remove('hidden');
+  }
+  function closeModal() {
+    modal.classList.add('hidden');
+  }
+
+  if (openModalBtn) {
+    openModalBtn.addEventListener('click', () => {
+      // Validate steps before showing modal; show errors if invalid
+      const validStep1 = validateStep(1, true);
+      const validStep2 = validateStep(2, true);
+      if (!(validStep1 && validStep2)) return;
+      buildModalReviewContent();
+      openModal();
+    });
+  }
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (closeBackdrop) closeBackdrop.addEventListener('click', closeModal);
+  if (continueEditingBtn) continueEditingBtn.addEventListener('click', closeModal);
+  if (confirmSubmitBtn) {
+    confirmSubmitBtn.addEventListener('click', () => {
+      // Submit the form directly
+      const form = document.getElementById('product-form');
+      if (form) form.submit();
+    });
+  }
+
+  // Removed clickable step indicators (no sidebar / scroll only)
+
+  // Observe sections to update indicator on manual scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const step = parseInt(entry.target.getAttribute('data-step'));
+        if (step && step !== currentStep) {
+          document.querySelectorAll('.step-indicator').forEach((el, index) => {
+            if (index + 1 <= step) {
+              el.classList.remove('bg-gray-300', 'text-gray-600');
+              el.classList.add('bg-gold-500', 'text-white');
+            } else {
+              el.classList.remove('bg-gold-500', 'text-white');
+              el.classList.add('bg-gray-300', 'text-gray-600');
+            }
+          });
+          currentStep = step;
+        }
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.form-step').forEach(section => observer.observe(section));
+  
+  // Removed old footer review handler (replaced by modal)
+});
+
+// Image upload functions
+function setupImageUpload() {
+  // Main image upload
+  const mainDropzone = document.getElementById('main-image-dropzone');
+  const mainInput = document.getElementById('main-image-input');
+  if (mainDropzone && mainInput) {
+    mainDropzone.addEventListener('click', () => mainInput.click());
+    mainDropzone.addEventListener('dragover', handleDragOver);
+    mainDropzone.addEventListener('drop', (e) => handleMainImageDrop(e));
+    mainInput.addEventListener('change', (e) => handleMainImageSelect(e));
+  }
+  
+  // Gallery images upload
+  const galleryDropzone = document.getElementById('gallery-dropzone');
+  const galleryInput = document.getElementById('gallery-images-input');
+  if (galleryDropzone && galleryInput) {
+    galleryDropzone.addEventListener('click', () => galleryInput.click());
+    galleryDropzone.addEventListener('dragover', handleDragOver);
+    galleryDropzone.addEventListener('drop', (e) => handleGalleryDrop(e));
+    galleryInput.addEventListener('change', (e) => handleGallerySelect(e));
+  }
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('border-gold-500', 'bg-gold-50');
+}
+
+function handleMainImageDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('border-gold-500', 'bg-gold-50');
+  
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    handleMainImageFile(files[0]);
+  }
+}
+
+function handleMainImageSelect(e) {
+  const files = e.target.files;
+  if (files.length > 0) {
+    handleMainImageFile(files[0]);
+  }
+}
+
+function handleMainImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image file.');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById('main-image-preview');
+    const previewImg = document.getElementById('main-image-preview-img');
+    
+    previewImg.src = e.target.result;
+    preview.classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeMainImage() {
+  document.getElementById('main-image-input').value = '';
+  document.getElementById('main-image-preview').classList.add('hidden');
+}
+
+function handleGalleryDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('border-gold-500', 'bg-gold-50');
+  
+  const files = Array.from(e.dataTransfer.files);
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      handleGalleryFile(file);
+    }
+  });
+}
+
+function handleGallerySelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      handleGalleryFile(file);
+    }
+  });
+}
+
+function handleGalleryFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById('gallery-preview');
+    preview.classList.remove('hidden');
+    
+    const imageDiv = document.createElement('div');
+    imageDiv.className = 'relative';
+    imageDiv.innerHTML = `
+      <img src="${e.target.result}" alt="Gallery preview" class="w-full h-24 object-cover rounded-lg">
+      <button type="button" class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors" onclick="removeGalleryImage(this)">
+        ×
+      </button>
+    `;
+    
+    preview.appendChild(imageDiv);
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeGalleryImage(button) {
+  button.parentElement.remove();
+}
+</script>
+{% endblock %}

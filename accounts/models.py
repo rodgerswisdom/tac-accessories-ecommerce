@@ -4,6 +4,19 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class CustomerProfile(models.Model):
+    CURRENCY_CHOICES = [
+        ('USD', 'US Dollar'),
+        ('EUR', 'Euro'),
+        ('GBP', 'British Pound'),
+        ('KES', 'Kenyan Shilling'),
+        ('NGN', 'Nigerian Naira'),
+        ('ZAR', 'South African Rand'),
+        ('GHS', 'Ghanaian Cedi'),
+        ('EGP', 'Egyptian Pound'),
+        ('MAD', 'Moroccan Dirham'),
+        ('TND', 'Tunisian Dinar'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(max_length=20, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -13,6 +26,13 @@ class CustomerProfile(models.Model):
         ('other', 'Other'),
     ], blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    preferred_currency = models.CharField(
+        max_length=3, 
+        choices=CURRENCY_CHOICES, 
+        blank=True, 
+        null=True,
+        help_text="User's preferred currency for pricing display"
+    )
     email_verified = models.BooleanField(default=False)
     phone_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

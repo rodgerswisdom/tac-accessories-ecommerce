@@ -38,12 +38,44 @@ def cart_remove(request, slug):
     if slug in cart:
         del cart[slug]
         request.session.modified = True
+    
+    if request.headers.get('Content-Type') == 'application/json' or request.method == 'POST':
+        return JsonResponse({
+            'success': True,
+            'cart_count': sum(cart.values()) if cart else 0,
+            'cart_items': len(cart) if cart else 0,
+        })
+    
     return redirect("cart:view")
 
 def cart_clear(request):
     request.session[CART_KEY] = {}
     request.session.modified = True
     return redirect("cart:view")
+
+def cart_update(request, slug, quantity):
+    """Update quantity of an item in the cart"""
+    if request.method == 'POST':
+        cart = _get_cart(request.session)
+        quantity = int(quantity)
+        
+        if quantity <= 0:
+            # Remove item if quantity is 0 or negative
+            if slug in cart:
+                del cart[slug]
+        else:
+            # Update quantity
+            cart[slug] = quantity
+            
+        request.session.modified = True
+        
+        return JsonResponse({
+            'success': True,
+            'cart_count': sum(cart.values()) if cart else 0,
+            'cart_items': len(cart) if cart else 0,
+        })
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def cart_count(request):
     """Return cart count as JSON"""

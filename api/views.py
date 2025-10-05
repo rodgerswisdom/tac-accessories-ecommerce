@@ -14,6 +14,7 @@ from django.core.cache import cache
 from django.conf import settings
 
 from catalog.models import Category, Product
+from catalog.services import PriceResolver
 from accounts.models import CustomerProfile, CustomerAddress
 from checkout.models import Order, OrderItem
 from .serializers import (
@@ -481,3 +482,127 @@ class AdminOrderViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(order)
         return Response(serializer.data)
+
+
+class TimezoneDetectionView(APIView):
+    """Timezone detection and currency resolution endpoint"""
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        """Set user timezone and return resolved currency"""
+        timezone = request.data.get('timezone')
+        if not timezone:
+            return Response(
+                {'error': 'timezone is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Resolve currency based on user preference or timezone
+        currency = PriceResolver.resolve_currency(request.user, timezone)
+        country_code = PriceResolver.get_country_from_timezone(timezone)
+        
+        # Store timezone info in session/cookie for future requests
+        request.session['user_timezone'] = timezone
+        request.session['user_country'] = country_code
+        request.session['user_currency'] = currency
+        request.session.modified = True
+        
+        return Response({
+            'timezone': timezone,
+            'country_code': country_code,
+            'currency': currency,
+            'message': 'Timezone and currency preferences updated'
+        })
+
+
+class PriceResolutionView(APIView):
+    """Price resolution endpoint for multiple products"""
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request):
+        """Get resolved prices for multiple products"""
+        product_ids = request.query_params.getlist('ids')
+        if not product_ids:
+            return Response(
+                {'error': 'Product IDs are required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            product_ids = [int(pid) for pid in product_ids]
+        except ValueError:
+            return Response(
+                {'error': 'Invalid product ID format'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Get timezone from session or request
+        timezone = request.session.get('user_timezone')
+        if not timezone:
+            timezone = request.headers.get('X-Timezone')
+        
+        # Resolve prices
+        prices = PriceResolver.resolve_prices_for_user(
+            request.user, 
+            timezone, 
+            product_ids
+        )
+        
+        return Response({
+            'prices': prices,
+            'currency': PriceResolver.resolve_currency(request.user, timezone),
+            'timezone': timezone
+        })
+
+
+class CurrencyPreferenceView(APIView):
+    """Currency preference management for authenticated users"""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        """Set user's preferred currency"""
+        currency = request.data.get('currency')
+        if not currency:
+            return Response(
+                {'error': 'currency is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate currency
+        valid_currencies = [choice[0] for choice in CustomerProfile.CURRENCY_CHOICES]
+        if currency not in valid_currencies:
+            return Response(
+                {'error': f'Invalid currency. Valid options: {valid_currencies}'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            profile = request.user.profile
+            profile.preferred_currency = currency
+            profile.save()
+            
+            return Response({
+                'preferred_currency': currency,
+                'message': 'Currency preference updated successfully'
+            })
+        except CustomerProfile.DoesNotExist:
+            return Response(
+                {'error': 'User profile not found'}, 
+                status=status.HTTP_404_NOT_F
+            )
+    
+    def delete(self, request):
+        """Clear user's preferred currency (use timezone-based currency)"""
+        try:
+            profile = request.user.profile
+            profile.preferred_currency = None
+            profile.save()
+            
+            return Response({
+                'message': 'Currency preference cleared. Using timezone-based currency.'
+            })
+        except CustomerProfile.DoesNotExist:
+            return Response(
+                {'error': 'User profile not found'}, 
+                status=status.HTTP_404_NOT_F
+            )
