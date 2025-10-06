@@ -1,6 +1,7 @@
 def cart_context(request):
     """Add cart information to template context"""
-    cart = request.session.get('cart', {})
+    from cart.views import CART_KEY
+    cart = request.session.get(CART_KEY, {})
     cart_count = sum(cart.values()) if cart else 0
     cart_items = len(cart) if cart else 0
     

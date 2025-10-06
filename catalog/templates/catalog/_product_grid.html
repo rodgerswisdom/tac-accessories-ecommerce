@@ -1,7 +1,7 @@
 <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
   {% for p in products %}
-    <div class="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden cursor-pointer hover:ring-2 hover:ring-gold-200 hover:ring-opacity-50" 
-         data-view-details 
+    <div class="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden hover:ring-2 hover:ring-gold-200 hover:ring-opacity-50 cursor-pointer relative"
+         data-view-details
          data-product-id="{{ p.id }}"
          data-product-name="{{ p.name }}"
          data-product-description="{{ p.description }}"
@@ -15,11 +15,13 @@
          data-product-stone-count="{{ p.stone_count }}"
          data-product-size="{{ p.size }}"
          data-product-category="{{ p.category.name }}"
-         data-product-sku="{{ p.sku }}">
+         data-product-sku="{{ p.sku }}"
+         data-product-slug="{{ p.slug }}"
+         data-product-detail-url="{% url 'catalog:product_detail' p.slug %}">
       <!-- Product Image -->
       <div class="relative aspect-square overflow-hidden">
-        {% if p.image %}
-          <img src="{{ p.image.url }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        {% if p.primary_image %}
+          <img src="{{ p.primary_image }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
         {% else %}
           <div class="w-full h-full bg-gradient-to-br from-gold-100 to-gold-200 flex items-center justify-center">
             {% hgi_stroke name="diamond-02" size="32" color="#d97706" stroke_width="2" %}
@@ -86,16 +88,16 @@
         <div class="flex flex-col mb-3 flex-shrink-0">
           {% if p.compare_price_cents and p.compare_price_cents > p.price_cents %}
             <!-- Original Price (Above) -->
-            <div class="text-sm text-gray-500 line-through mb-1">
+            <div class="text-sm text-gray-500 line-through mb-1 js-compare-price" data-product-id="{{ p.id }}">
               {{ p.compare_price_display }}
             </div>
             <!-- Discounted Price (Below) -->
-            <div class="text-lg font-bold text-gray-900">
+            <div class="text-lg font-bold text-gray-900 js-price" data-product-id="{{ p.id }}" data-base-currency="KES">
               {{ p.price_display }}
             </div>
           {% else %}
             <!-- Regular Price -->
-            <div class="text-lg font-bold text-gray-900">
+            <div class="text-lg font-bold text-gray-900 js-price" data-product-id="{{ p.id }}" data-base-currency="KES">
               {{ p.price_display }}
             </div>
           {% endif %}
@@ -112,6 +114,13 @@
               Out of Stock
             </span>
           {% endif %}
+        </div>
+        
+        <!-- Click Indicator -->
+        <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div class="bg-gold-500 text-white p-2 rounded-full shadow-lg">
+            <i class="fas fa-eye text-xs"></i>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Product, Tag
+from .models import Category, Product, Tag, ProductPrice, CurrencyRate
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -83,3 +83,27 @@ class ProductAdmin(admin.ModelAdmin):
         else:
             return format_html('<span style="color: green;">In Stock ({})</span>', obj.stock_quantity)
     stock_status.short_description = "Stock Status"
+
+
+@admin.register(ProductPrice)
+class ProductPriceAdmin(admin.ModelAdmin):
+    list_display = ("product", "country_code", "currency", "price_display", "is_override", "is_active", "created_at")
+    list_filter = ("country_code", "currency", "is_override", "is_active", "created_at")
+    search_fields = ("product__name", "product__sku", "country_code", "currency")
+    list_editable = ("is_override", "is_active")
+    ordering = ("-created_at",)
+    
+    def price_display(self, obj):
+        return obj.price_display
+    price_display.short_description = "Price"
+
+
+@admin.register(CurrencyRate)
+class CurrencyRateAdmin(admin.ModelAdmin):
+    list_display = ("from_currency", "to_currency", "rate", "is_active", "updated_at")
+    list_filter = ("from_currency", "to_currency", "is_active", "updated_at")
+    list_editable = ("rate", "is_active")
+    ordering = ("from_currency", "to_currency")
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by("from_currency", "to_currency")

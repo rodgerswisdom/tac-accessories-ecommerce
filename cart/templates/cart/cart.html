@@ -61,8 +61,8 @@
                 
                 <!-- Price -->
                 <div class="text-right">
-                  <p class="text-lg font-bold text-gold-600">KES {{ it.subtotal|floatformat:2 }}</p>
-                  <p class="text-sm text-gray-500">KES {{ it.product.price_display|slice:"4:" }} each</p>
+                  <p class="text-lg font-bold text-gold-600 js-cart-item-total" data-product-id="{{ it.product.id }}">KES {{ it.subtotal|floatformat:2 }}</p>
+                  <p class="text-sm text-gray-500 js-cart-item-price" data-product-id="{{ it.product.id }}">KES {{ it.product.price_display|slice:"4:" }} each</p>
                 </div>
                 
                 <!-- Remove Button -->
@@ -94,7 +94,7 @@
           <div class="space-y-4">
             <div class="flex justify-between">
               <span class="text-gray-600">Subtotal</span>
-              <span class="font-medium">KES {{ total|floatformat:2 }}</span>
+              <span class="font-medium js-cart-subtotal">KES {{ total|floatformat:2 }}</span>
             </div>
             
             <div class="flex justify-between">
@@ -110,7 +110,7 @@
             <div class="border-t border-gray-200 pt-4">
               <div class="flex justify-between">
                 <span class="text-lg font-semibold text-gray-900">Total</span>
-                <span class="text-xl font-bold text-gold-600">KES {{ total|floatformat:2 }}</span>
+                <span class="text-xl font-bold text-gold-600 js-cart-total">KES {{ total|floatformat:2 }}</span>
               </div>
             </div>
           </div>
@@ -194,10 +194,16 @@ function updateQuantity(slug, newQuantity) {
         return;
     }
     
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (!csrfToken) {
+        console.error('CSRF token not found');
+        return;
+    }
+    
     fetch(`/cart/update/${slug}/${newQuantity}/`, {
         method: 'POST',
         headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'X-CSRFToken': csrfToken.value,
             'Content-Type': 'application/json',
         },
     })
@@ -216,10 +222,16 @@ function updateQuantity(slug, newQuantity) {
 
 function removeItem(slug) {
     if (confirm('Are you sure you want to remove this item from your cart?')) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+            return;
+        }
+        
         fetch(`/cart/remove/${slug}/`, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-CSRFToken': csrfToken.value,
                 'Content-Type': 'application/json',
             },
         })
@@ -237,4 +249,9 @@ function removeItem(slug) {
     }
 }
 </script>
+
+<!-- Hidden CSRF token form for JavaScript -->
+<form style="display: none;">
+    {% csrf_token %}
+</form>
 {% endblock %}

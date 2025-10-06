@@ -78,6 +78,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- HugeIcons Django Package (loaded globally) -->
   <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+  <script src="{% static 'js/pricing.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/site-theme.css' %}">
     <style>
         .gradient-gold {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
@@ -522,7 +524,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 " style="font-family: 'Poppins', sans-serif;">
+<body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 " style="font-family: 'Poppins', sans-serif;" {% if user.is_authenticated %}data-user-authenticated="true"{% endif %}>
     <!-- Navigation -->
     <nav id="navbar" class="glass-effect shadow-lg border-b border-gold-200 fixed top-0 left-0 right-0 z-50 transform transition-transform duration-300 ease-in-out">
         <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
@@ -652,89 +654,7 @@
   </main>
 
 
-    <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
-        <div class="flex flex-col h-full">
-            <!-- Cart Header -->
-            <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-                <h2 class="text-lg sm:text-xl font-serif font-bold text-gray-900">Shopping Cart</h2>
-                <button id="close-cart" class="text-gray-500 hover:text-gray-700 transition-colors p-2">
-                    <i class="fas fa-times text-lg sm:text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- Cart Items -->
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 sm:p-6">
-                <div class="text-center py-8 sm:py-12">
-                    <i class="fas fa-shopping-cart text-3xl sm:text-4xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500 text-base sm:text-lg">Your cart is empty</p>
-                    <p class="text-sm text-gray-400 mt-2">Add some beautiful jewellery to get started</p>
-                </div>
-            </div>
-            
-            <!-- Cart Footer -->
-            <div id="cart-footer" class="hidden border-t border-gray-200 p-4 sm:p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-base sm:text-lg font-semibold text-gray-900">Total:</span>
-                    <span id="cart-total-amount" class="text-lg sm:text-xl font-bold text-gold-600">KES 0.00</span>
-                </div>
-                <div class="space-y-3">
-                    <a href="{% url 'cart:view' %}" class="block w-full gradient-gold text-white text-center py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-sm sm:text-base">
-                        View Cart
-                    </a>
-                    <button class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm sm:text-base">
-                        Continue Shopping
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Cart Overlay -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-
-    <!-- Quick Add to Cart Modal -->
-    <div id="quick-add-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-3 sm:p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform scale-95 transition-transform duration-300" id="modal-content">
-                <div class="p-4 sm:p-6">
-                    <!-- Modal Header -->
-                    <div class="flex items-center justify-between mb-4 sm:mb-6">
-                        <h3 class="text-lg sm:text-xl font-serif font-bold text-gray-900">Add to Cart</h3>
-                        <button id="close-modal" class="text-gray-500 hover:text-gray-700 transition-colors p-1">
-                            <i class="fas fa-times text-lg sm:text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- Product Info -->
-                    <div id="modal-product-info" class="mb-6">
-                        <!-- Product details will be populated here -->
-                    </div>
-                    
-                    <!-- Quantity Selector -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Quantity</label>
-                        <div class="flex items-center justify-center space-x-4">
-                            <button id="decrease-qty" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
-                                <i class="fas fa-minus text-sm"></i>
-                            </button>
-                            <span id="quantity-display" class="text-2xl font-bold text-gray-900 w-12 text-center">1</span>
-                            <button id="increase-qty" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
-                                <i class="fas fa-plus text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="flex space-x-3">
-                        <button id="add-to-cart-btn" class="flex-1 gradient-gold text-white py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium">
-                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Product Detail Modal -->
     <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
@@ -744,8 +664,8 @@
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-2xl font-serif font-bold text-gray-900">Product Details</h3>
-                        <button id="close-detail-modal" class="text-gray-500 hover:text-gray-700 transition-colors">
-                            <i class="fas fa-times text-xl"></i>
+                        <button id="close-detail-modal" class="text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors p-2 rounded-full flex items-center justify-center w-8 h-8 text-xl font-bold">
+                            ×
                         </button>
                     </div>
                     
@@ -953,308 +873,19 @@
             navbar.classList.add('translate-y-0');
         });
 
-        // Cart functionality
-        class CartManager {
-            constructor() {
-                this.cart = this.loadCart();
-                this.products = {}; // Store product details
-                this.updateCartDisplay();
-                this.bindEvents();
-            }
-
-            loadCart() {
-                const cart = localStorage.getItem('tac_cart');
-                return cart ? JSON.parse(cart) : {};
-            }
-
-            saveCart() {
-                localStorage.setItem('tac_cart', JSON.stringify(this.cart));
-                this.updateCartDisplay();
-            }
-
-            addToCart(productId, quantity = 1, productData = null) {
-                if (this.cart[productId]) {
-                    this.cart[productId] += quantity;
-                } else {
-                    this.cart[productId] = quantity;
-                }
-                
-                if (productData) {
-                    this.products[productId] = productData;
-                }
-                
-                this.saveCart();
-                this.showCartNotification();
-            }
-
-            removeFromCart(productId) {
-                delete this.cart[productId];
-                delete this.products[productId];
-                this.saveCart();
-            }
-
-            updateQuantity(productId, quantity) {
-                if (quantity <= 0) {
-                    this.removeFromCart(productId);
-                } else {
-                    this.cart[productId] = quantity;
-                    this.saveCart();
-                }
-            }
-
-            getCartCount() {
-                return Object.values(this.cart).reduce((sum, qty) => sum + qty, 0);
-            }
-
-            getCartTotal() {
-                let total = 0;
-                for (const [productId, quantity] of Object.entries(this.cart)) {
-                    if (this.products[productId]) {
-                        total += this.products[productId].price * quantity;
-                    }
-                }
-                return total;
-            }
-
-            updateCartDisplay() {
-                const count = this.getCartCount();
-                const countElement = document.getElementById('cart-count');
-                const itemsElement = document.getElementById('cart-items');
-                const footerElement = document.getElementById('cart-footer');
-                const totalElement = document.getElementById('cart-total-amount');
-
-                countElement.textContent = count;
-
-                if (count === 0) {
-                    itemsElement.innerHTML = `
-                        <div class="text-center py-12">
-                            <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-500">Your cart is empty</p>
-                            <p class="text-sm text-gray-400 mt-2">Add some beautiful jewellery to get started</p>
-                        </div>
-                    `;
-                    footerElement.classList.add('hidden');
-                } else {
-                    this.renderCartItems(itemsElement);
-                    totalElement.textContent = `KES ${this.getCartTotal().toFixed(2)}`;
-                    footerElement.classList.remove('hidden');
-                }
-            }
-
-            renderCartItems(container) {
-                let html = '';
-                for (const [productId, quantity] of Object.entries(this.cart)) {
-                    const product = this.products[productId];
-                    if (product) {
-                        html += `
-                            <div class="flex items-center space-x-4 py-4 border-b border-gray-100 last:border-b-0">
-                                <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-gem text-gold-400 text-xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900 text-sm">${product.name}</h4>
-                                    <p class="text-xs text-gray-500">${product.material} • ${product.carat || 'N/A'}</p>
-                                    <p class="text-sm font-semibold text-gold-600">KES ${product.price.toFixed(2)}</p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="cartManager.updateQuantity('${productId}', ${quantity - 1})" class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs hover:bg-gray-300 transition-colors">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <span class="w-8 text-center text-sm font-medium">${quantity}</span>
-                                    <button onclick="cartManager.updateQuantity('${productId}', ${quantity + 1})" class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs hover:bg-gray-300 transition-colors">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                                <button onclick="cartManager.removeFromCart('${productId}')" class="text-gray-400 hover:text-red-500 transition-colors">
-                                    <i class="fas fa-trash text-sm"></i>
-                                </button>
-                            </div>
-                        `;
-                    }
-                }
-                container.innerHTML = html;
-            }
-
-            showCartNotification() {
-                // Create a temporary notification
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-20 right-6 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up';
-                notification.innerHTML = '<i class="fas fa-check mr-2"></i>Added to cart!';
-                document.body.appendChild(notification);
-
-                setTimeout(() => {
-                    notification.remove();
-                }, 3000);
-            }
-
-            openCart() {
-                document.getElementById('cart-sidebar').classList.remove('translate-x-full');
-                document.getElementById('cart-overlay').classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            }
-
-            closeCart() {
-                document.getElementById('cart-sidebar').classList.add('translate-x-full');
-                document.getElementById('cart-overlay').classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-            }
-
-            bindEvents() {
-                // Cart button
-                document.getElementById('cart-button').addEventListener('click', () => {
-                    this.openCart();
-                });
-
-                // Close cart button
-                document.getElementById('close-cart').addEventListener('click', () => {
-                    this.closeCart();
-                });
-
-                // Overlay click
-                document.getElementById('cart-overlay').addEventListener('click', () => {
-                    this.closeCart();
-                });
-
-                // Continue shopping button
-                document.querySelector('#cart-footer button').addEventListener('click', () => {
-                    this.closeCart();
-                });
-
-                // Bind add to cart buttons
-                document.addEventListener('click', (e) => {
-                    if (e.target.matches('[data-add-to-cart]')) {
-                        e.preventDefault();
-                        const productId = e.target.dataset.productId;
-                        const quantity = parseInt(e.target.dataset.quantity) || 1;
-                        const productData = e.target.dataset.productData ? JSON.parse(e.target.dataset.productData) : null;
-                        this.addToCart(productId, quantity, productData);
-                    }
-                });
-            }
+        // Simple cart functionality - redirect to Django cart
+        function openCart() {
+            window.location.href = '/cart/';
         }
 
-        // Initialize cart manager
-        const cartManager = new CartManager();
-
-        // Quick Add Modal functionality
-        class QuickAddModal {
-            constructor() {
-                this.currentProduct = null;
-                this.quantity = 1;
-                this.bindEvents();
+        // Bind cart button
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartButton = document.getElementById('cart-button');
+            if (cartButton) {
+                cartButton.addEventListener('click', openCart);
             }
+        });
 
-            open(productData) {
-                console.log('QuickAddModal.open called with:', productData);
-                this.currentProduct = productData;
-                this.quantity = 1;
-                this.updateModalContent();
-                const modal = document.getElementById('quick-add-modal');
-                const content = document.getElementById('modal-content');
-                if (modal && content) {
-                    modal.classList.remove('hidden');
-                    content.classList.remove('scale-95');
-                    document.body.classList.add('overflow-hidden');
-                } else {
-                    console.error('Modal elements not found');
-                }
-            }
-
-            close() {
-                document.getElementById('quick-add-modal').classList.add('hidden');
-                document.getElementById('modal-content').classList.add('scale-95');
-                document.body.classList.remove('overflow-hidden');
-                this.currentProduct = null;
-                this.quantity = 1;
-            }
-
-            updateModalContent() {
-                if (!this.currentProduct) return;
-
-                const productInfo = document.getElementById('modal-product-info');
-                productInfo.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <div class="w-20 h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-gem text-gold-400 text-2xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-serif font-bold text-gray-900 text-lg">${this.currentProduct.name}</h4>
-                            <p class="text-sm text-gray-600 mb-2">${this.currentProduct.short_description}</p>
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                                    <i class="fas fa-gem mr-1"></i>${this.currentProduct.material}
-                                </span>
-                                ${this.currentProduct.carat ? `<span class="text-xs bg-gold-100 text-gold-700 px-2 py-1 rounded-full">${this.currentProduct.carat}</span>` : ''}
-                            </div>
-                            <p class="text-xl font-bold text-gold-600">${this.currentProduct.price_display}</p>
-                        </div>
-                    </div>
-                `;
-
-                document.getElementById('quantity-display').textContent = this.quantity;
-                document.getElementById('view-product-btn').onclick = () => {
-                    window.location.href = this.currentProduct.detail_url;
-                };
-            }
-
-            increaseQuantity() {
-                this.quantity++;
-                document.getElementById('quantity-display').textContent = this.quantity;
-            }
-
-            decreaseQuantity() {
-                if (this.quantity > 1) {
-                    this.quantity--;
-                    document.getElementById('quantity-display').textContent = this.quantity;
-                }
-            }
-
-            addToCart() {
-                if (this.currentProduct) {
-                    cartManager.addToCart(
-                        this.currentProduct.id,
-                        this.quantity,
-                        {
-                            name: this.currentProduct.name,
-                            price: this.currentProduct.price_cents / 100,
-                            material: this.currentProduct.material,
-                            carat: this.currentProduct.carat
-                        }
-                    );
-                    this.close();
-                }
-            }
-
-            bindEvents() {
-                // Close modal buttons
-                document.getElementById('close-modal').addEventListener('click', () => {
-                    this.close();
-                });
-
-                document.getElementById('quick-add-modal').addEventListener('click', (e) => {
-                    if (e.target.id === 'quick-add-modal') {
-                        this.close();
-                    }
-                });
-
-                // Quantity controls
-                document.getElementById('increase-qty').addEventListener('click', () => {
-                    this.increaseQuantity();
-                });
-
-                document.getElementById('decrease-qty').addEventListener('click', () => {
-                    this.decreaseQuantity();
-                });
-
-                // Add to cart button
-                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
-                    this.addToCart();
-                });
-            }
-        }
-
-        // Initialize quick add modal
-        const quickAddModal = new QuickAddModal();
 
         // Product Detail Modal functionality
         class ProductDetailModal {
@@ -1382,11 +1013,11 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Quantity</label>
                                 <div class="flex items-center space-x-4">
                                     <button id="detail-decrease-qty" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
-                                        <i class="fas fa-minus text-sm"></i>
+                                        {% hgi_stroke name="remove-02" size="12" color="#374151" stroke_width="2" %}
                                     </button>
                                     <span id="detail-quantity-display" class="text-2xl font-bold text-gray-900 w-16 text-center ">1</span>
                                     <button id="detail-increase-qty" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
-                                        <i class="fas fa-plus text-sm"></i>
+                                        {% hgi_stroke name="add-02" size="12" color="#374151" stroke_width="2" %}
                                     </button>
                                 </div>
                             </div>
@@ -1426,18 +1057,12 @@
             }
 
             addToCart() {
-                if (this.currentProduct) {
-                    cartManager.addToCart(
-                        this.currentProduct.id,
-                        this.quantity,
-                        {
-                            name: this.currentProduct.name,
-                            price: this.currentProduct.price_cents / 100,
-                            material: this.currentProduct.material,
-                            carat: this.currentProduct.carat
-                        }
-                    );
-                    this.close();
+                if (this.currentProduct && this.currentProduct.slug) {
+                    console.log('Adding to cart:', this.currentProduct.slug);
+                    // Add to cart - redirect will close the modal naturally
+                    window.location.href = `/cart/add/${this.currentProduct.slug}/`;
+                } else {
+                    console.error('Cannot add to cart: missing product or slug', this.currentProduct);
                 }
             }
 
@@ -1473,31 +1098,12 @@
                 });
             }
 
-            // Quick add to cart buttons
-            document.addEventListener('click', function(e) {
-                if (e.target.matches('[data-quick-add]') || e.target.closest('[data-quick-add]')) {
-                    e.preventDefault();
-                    const button = e.target.matches('[data-quick-add]') ? e.target : e.target.closest('[data-quick-add]');
-                    const productData = {
-                        id: button.dataset.productId,
-                        name: button.dataset.productName,
-                        short_description: button.dataset.productDescription,
-                        price_display: button.dataset.productPrice,
-                        price_cents: parseInt(button.dataset.productPriceCents),
-                        material: button.dataset.productMaterial,
-                        carat: button.dataset.productCarat,
-                        detail_url: button.dataset.productDetailUrl
-                    };
-                    console.log('Opening quick add modal with:', productData);
-                    quickAddModal.open(productData);
-                }
-            });
 
             // View details buttons and product cards
             document.addEventListener('click', function(e) {
                 // Check if clicked on a product card or view details button
                 const productCard = e.target.closest('[data-view-details]');
-                if (productCard && !e.target.matches('[data-quick-add]') && !e.target.closest('[data-quick-add]')) {
+                if (productCard) {
                     e.preventDefault();
                     const productData = {
                         id: productCard.dataset.productId,
@@ -1513,7 +1119,9 @@
                         stone_count: productCard.dataset.productStoneCount,
                         size: productCard.dataset.productSize,
                         category: productCard.dataset.productCategory,
-                        sku: productCard.dataset.productSku
+                        sku: productCard.dataset.productSku,
+                        slug: productCard.dataset.productSlug,
+                        detail_url: productCard.dataset.productDetailUrl
                     };
                     console.log('Opening product detail modal with:', productData);
                     productDetailModal.open(productData);
@@ -1533,14 +1141,14 @@
             // WhatsApp phone number (replace with your actual WhatsApp number)
             const whatsappNumber = '254700000000'; // Replace with your WhatsApp number
 
-            // Open WhatsApp modal
-            whatsappButton.addEventListener('click', function() {
-                whatsappModal.classList.remove('hidden');
-                setTimeout(() => {
-                    whatsappModal.querySelector('.bg-white').classList.remove('scale-95');
-                    whatsappModal.querySelector('.bg-white').classList.add('scale-100');
-                }, 10);
-            });
+            // Open WhatsApp modal (disabled)
+            // whatsappButton.addEventListener('click', function() {
+            //     whatsappModal.classList.remove('hidden');
+            //     setTimeout(() => {
+            //         whatsappModal.querySelector('.bg-white').classList.remove('scale-95');
+            //         whatsappModal.querySelector('.bg-white').classList.add('scale-100');
+            //     }, 10);
+            // });
 
             // Close WhatsApp modal
             function closeWhatsappModalFunc() {

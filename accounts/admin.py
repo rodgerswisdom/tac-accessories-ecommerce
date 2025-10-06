@@ -7,6 +7,7 @@ class CustomerProfileInline(admin.StackedInline):
     model = CustomerProfile
     can_delete = False
     verbose_name_plural = 'Profile'
+    fields = ('phone', 'date_of_birth', 'gender', 'avatar', 'preferred_currency', 'email_verified', 'phone_verified')
 
 class UserAdmin(BaseUserAdmin):
     inlines = (CustomerProfileInline,)

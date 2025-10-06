@@ -1,19 +1,118 @@
 {% extends "base.html" %}
-{% block title %}{{ product.name }} · tac-ecommerce{% endblock %}
+{% load static %}
+
+{% block title %}{{ product.name }} · TAC Jewellery{% endblock %}
+
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div class="aspect-square bg-gray-100 rounded"></div>
-  <div>
-    <h1 class="text-2xl font-semibold">{{ product.name }}</h1>
-    <div class="text-lg my-2">{{ product.price_display }}</div>
-    {% if product.in_stock %}
-      <form method="post" action="{% url 'cart:add' product.slug %}">
-        {% csrf_token %}
-        <button class="px-4 py-2 bg-black text-white rounded">Add to cart</button>
-      </form>
-    {% else %}
-      <div class="text-red-600 font-medium">Out of stock</div>
-    {% endif %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Product Images -->
+    <div class="space-y-4">
+      <!-- Main Image -->
+      <div class="aspect-square overflow-hidden rounded-2xl bg-gray-100">
+        {% if product.primary_image %}
+          <img src="{{ product.primary_image }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+        {% else %}
+          <div class="w-full h-full bg-gradient-to-br from-gold-100 to-gold-200 flex items-center justify-center">
+            {% hgi_stroke name="diamond-02" size="64" color="#d97706" stroke_width="2" %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Gallery Images -->
+      {% if product.gallery_images %}
+        <div class="grid grid-cols-4 gap-2">
+          {% for image_url in product.gallery_images %}
+            <div class="aspect-square overflow-hidden rounded-lg bg-gray-100">
+              <img src="{{ image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity">
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Product Details -->
+    <div class="space-y-6">
+      <!-- Product Title -->
+      <div>
+        <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">{{ product.name }}</h1>
+        <p class="text-gray-600">{{ product.short_description }}</p>
+      </div>
+      
+      <!-- Price -->
+      <div class="flex items-center space-x-4">
+        <span class="text-3xl font-bold text-gold-600 js-price" data-product-id="{{ product.id }}" data-base-currency="KES">{{ product.price_display }}</span>
+        {% if product.compare_price_display %}
+          <span class="text-xl text-gray-500 line-through js-compare-price" data-product-id="{{ product.id }}">{{ product.compare_price_display }}</span>
+          <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm font-medium">
+            {{ product.discount_percentage }}% OFF
+          </span>
+        {% endif %}
+      </div>
+      
+      <!-- Product Specifications -->
+      <div class="space-y-3">
+        <div class="flex items-center">
+          <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
+          <span class="text-gray-600">Material: <span class="font-medium text-gray-900">{{ product.get_material_display }}</span></span>
+        </div>
+        {% if product.carat %}
+          <div class="flex items-center">
+            <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
+            <span class="text-gray-600">Carat: <span class="font-medium text-gray-900">{{ product.carat }}</span></span>
+          </div>
+        {% endif %}
+        {% if product.stone_type %}
+          <div class="flex items-center">
+            <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
+            <span class="text-gray-600">Stone: <span class="font-medium text-gray-900">{{ product.stone_type }}</span></span>
+          </div>
+        {% endif %}
+        {% if product.size %}
+          <div class="flex items-center">
+            <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
+            <span class="text-gray-600">Size: <span class="font-medium text-gray-900">{{ product.size }}</span></span>
+          </div>
+        {% endif %}
+        <div class="flex items-center">
+          <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
+          <span class="text-gray-600">SKU: <span class="font-medium text-gray-900">{{ product.sku }}</span></span>
+        </div>
+      </div>
+      
+      <!-- Description -->
+      {% if product.description %}
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
+          <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+        </div>
+      {% endif %}
+      
+      <!-- Add to Cart -->
+      <div class="pt-4">
+        {% if product.in_stock %}
+          <button class="w-full gradient-gold text-white py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-lg"
+                  data-add-to-cart
+                  data-product-slug="{{ product.slug }}"
+                  data-product-id="{{ product.id }}"
+                  data-product-name="{{ product.name }}"
+                  data-product-price="{{ product.price_display }}"
+                  data-product-price-cents="{{ product.price_cents }}"
+                  data-product-material="{{ product.get_material_display }}"
+                  data-product-carat="{{ product.carat }}"
+                  data-product-short-description="{{ product.short_description }}">
+            <span class="flex items-center justify-center">
+              <span class="flex-shrink-0 mr-2">{% hgi_stroke name="shopping-bag-02" size="20" color="#ffffff" stroke_width="2" %}</span>
+              <span>Add to Cart</span>
+            </span>
+          </button>
+        {% else %}
+          <div class="w-full bg-gray-100 text-gray-500 py-4 rounded-lg text-center font-medium">
+            Out of Stock
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

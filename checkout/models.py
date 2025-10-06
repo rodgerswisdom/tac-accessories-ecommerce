@@ -91,10 +91,11 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def generate_order_number(self):
-        """Generate a unique order number"""
-        timestamp = timezone.now().strftime('%Y%m%d')
-        unique_id = str(uuid.uuid4().hex[:6].upper())
-        return f"ORD-{timestamp}-{unique_id}"
+        """Generate a unique order number in format TAC-ORD{random_string}"""
+        import random
+        import string
+        random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        return f"TAC-ORD{random_part}"
 
     @property
     def total_display(self):
