@@ -88,7 +88,7 @@ TEMPLATES = [
                 "core.context_processors.cart_context",
             ],
             "builtins": [
-                "django_hugeicons_stroke.templatetags.hugeicons_stroke",
+                "core.templatetags.hugeicons_stroke",  # Temporary fix for hgi_stroke tags
             ],
         },
     },
