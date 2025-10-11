@@ -48,10 +48,10 @@ class Order(models.Model):
     ]
 
     # Basic order info
-    order_number = models.CharField(max_length=20, unique=True, editable=False)
+    order_number = models.CharField(max_length=20, unique=True, editable=False, null=True)
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
     
     # Address information
     address = models.ForeignKey(Address, on_delete=models.PROTECT)
@@ -144,7 +144,12 @@ class OrderItem(models.Model):
     class Meta:
         verbose_name = 'Order Item'
         verbose_name_plural = 'Order Items'
-        unique_together = ['order', 'product']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['order', 'product'],
+                name='unique_order_product',
+            )
+        ]
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"

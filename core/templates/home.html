@@ -171,9 +171,9 @@
                     
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <span class="text-xl sm:text-2xl font-bold text-gold-600">KSh {{ product.price_display }}</span>
+                            <span class="text-xl sm:text-2xl font-bold text-gold-600">{{ product.price_display }}</span>
                             {% if product.compare_price_cents and product.compare_price_cents > product.price_cents %}
-                                <span class="text-sm text-gray-400 line-through">KSh {{ product.compare_price_display }}</span>
+                                <span class="text-sm text-gray-400 line-through">{{ product.compare_price_display }}</span>
                             {% endif %}
                         </div>
                         

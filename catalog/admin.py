@@ -1,6 +1,13 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Product, Tag, ProductPrice, CurrencyRate
+from .models import Category, Product, Tag, ProductPrice, CurrencyRate, ProductImage
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+    fields = ("image", "alt_text", "is_main", "sort_order")
+    ordering = ("sort_order",)
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -59,7 +66,7 @@ class ProductAdmin(admin.ModelAdmin):
             "fields": ("stock_quantity", "low_stock_threshold", "track_inventory")
         }),
         ("Media", {
-            "fields": ("image", "thumbnail", "gallery_images")
+            "fields": ("image", "thumbnail")
         }),
         ("Physical Properties", {
             "fields": ("weight_grams",)
@@ -83,6 +90,7 @@ class ProductAdmin(admin.ModelAdmin):
         else:
             return format_html('<span style="color: green;">In Stock ({})</span>', obj.stock_quantity)
     stock_status.short_description = "Stock Status"
+    inlines = (ProductImageInline,)
 
 
 @admin.register(ProductPrice)

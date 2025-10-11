@@ -41,8 +41,8 @@ class Category(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='unisex')
     is_active = models.BooleanField(default=True)
     sort_order = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         ordering = ['sort_order', 'name']
@@ -107,7 +107,7 @@ class Product(models.Model):
     size = models.CharField(max_length=20, blank=True, help_text="Ring size, chain length, etc.")
     
     # Images - keeping main image field for backward compatibility
-    image = models.ImageField(upload_to='products/main/', blank=True, null=True, help_text="Main product image")
+    image = models.ImageField(upload_to='products/', blank=True, null=True, help_text="Main product image")
     thumbnail = models.ImageField(upload_to='products/thumbnails/', blank=True, null=True, help_text="Product thumbnail")
     
     # Status fields
@@ -117,7 +117,7 @@ class Product(models.Model):
     is_bestseller = models.BooleanField(default=False, help_text="Mark as bestseller")
     
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -219,10 +219,15 @@ class ProductPrice(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['product', 'country_code', 'currency']
         ordering = ['country_code', 'currency']
         verbose_name = 'Product Price'
         verbose_name_plural = 'Product Prices'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['product', 'country_code', 'currency'],
+                name='catalog_productprice_unique_product_country_currency',
+            )
+        ]
 
     def __str__(self):
         return f"{self.product.name} - {self.country_code} ({self.currency})"
@@ -242,10 +247,15 @@ class CurrencyRate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['from_currency', 'to_currency']
         ordering = ['from_currency', 'to_currency']
         verbose_name = 'Currency Rate'
         verbose_name_plural = 'Currency Rates'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['from_currency', 'to_currency'],
+                name='catalog_currencyrate_unique_from_to_currency',
+            )
+        ]
 
     def __str__(self):
         return f"{self.from_currency} to {self.to_currency}: {self.rate}"
