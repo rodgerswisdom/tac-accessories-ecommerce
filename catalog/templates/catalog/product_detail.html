@@ -1,120 +1,142 @@
 {% extends "base.html" %}
-{% load static %}
 
-{% block title %}{{ product.name }} · TAC Jewellery{% endblock %}
+{% block title %}{{ product.name }} · TAC Accessories{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Product Images -->
-    <div class="space-y-4">
-      <!-- Main Image -->
-      <div class="aspect-square overflow-hidden rounded-2xl bg-gray-100">
-        {% if product.primary_image %}
-          <img src="{{ product.primary_image }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-        {% else %}
-          <div class="w-full h-full bg-gradient-to-br from-gold-100 to-gold-200 flex items-center justify-center">
-            {% hgi_stroke name="diamond-02" size="64" color="#d97706" stroke_width="2" %}
-          </div>
-        {% endif %}
-      </div>
-      
-      <!-- Gallery Images -->
-      {% with gallery_images=product.get_gallery_images %}
-        {% if gallery_images %}
-          <div class="grid grid-cols-4 gap-2">
-            {% for gallery_image in gallery_images %}
-              <div class="aspect-square overflow-hidden rounded-lg bg-gray-100">
-                <img src="{{ gallery_image.image.url }}" alt="{{ gallery_image.alt_text|default:product.name }}" class="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity">
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-    </div>
-    
-    <!-- Product Details -->
-    <div class="space-y-6">
-      <!-- Product Title -->
-      <div>
-        <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">{{ product.name }}</h1>
-        <p class="text-gray-600">{{ product.short_description }}</p>
-      </div>
-      
-      <!-- Price -->
-      <div class="flex items-center space-x-4">
-        <span class="text-3xl font-bold text-gold-600 js-price" data-product-id="{{ product.id }}" data-base-currency="KES">{{ product.price_display }}</span>
-        {% if product.compare_price_display %}
-          <span class="text-xl text-gray-500 line-through js-compare-price" data-product-id="{{ product.id }}">{{ product.compare_price_display }}</span>
-          <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm font-medium">
-            {{ product.discount_percentage }}% OFF
-          </span>
-        {% endif %}
-      </div>
-      
-      <!-- Product Specifications -->
-      <div class="space-y-3">
-        <div class="flex items-center">
-          <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
-          <span class="text-gray-600">Material: <span class="font-medium text-gray-900">{{ product.get_material_display }}</span></span>
+<section class="section" id="product-detail">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}">Home</a>
+      <span>›</span>
+      <a href="{% url 'catalog:product_list' %}">Shop</a>
+      <span>›</span>
+      <span>{{ product.category.name }}</span>
+    </nav>
+
+    <div class="product-detail">
+      <div class="product-gallery">
+        <div class="product-gallery__hero">
+          {% if product.primary_image %}
+            <img src="{{ product.primary_image }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1516637090014-cb1ab0d08fc7?auto=format&fit=crop&w=1080&q=80" alt="{{ product.name }}">
+          {% endif %}
         </div>
-        {% if product.carat %}
-          <div class="flex items-center">
-            <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
-            <span class="text-gray-600">Carat: <span class="font-medium text-gray-900">{{ product.carat }}</span></span>
-          </div>
-        {% endif %}
-        {% if product.stone_type %}
-          <div class="flex items-center">
-            <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
-            <span class="text-gray-600">Stone: <span class="font-medium text-gray-900">{{ product.stone_type }}</span></span>
-          </div>
-        {% endif %}
-        {% if product.size %}
-          <div class="flex items-center">
-            <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
-            <span class="text-gray-600">Size: <span class="font-medium text-gray-900">{{ product.size }}</span></span>
-          </div>
-        {% endif %}
-        <div class="flex items-center">
-          <span class="flex-shrink-0 mr-2">{% hgi_stroke name="diamond-02" size="16" color="#6b7280" stroke_width="2" %}</span>
-          <span class="text-gray-600">SKU: <span class="font-medium text-gray-900">{{ product.sku }}</span></span>
-        </div>
+        {% with gallery=product.get_gallery_images %}
+          {% if gallery %}
+            <div class="product-gallery__thumbs">
+              {% for image in gallery %}
+                <div class="product-gallery__thumb">
+                  <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}">
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
       </div>
-      
-      <!-- Description -->
-      {% if product.description %}
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-          <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+
+      <div class="product-overview">
+        <a href="{% url 'catalog:product_list' %}" class="btn btn--ghost btn--sm" style="width:max-content;">
+          <i class="ph ph-arrow-left"></i>
+          <span>Continue shopping</span>
+        </a>
+        <div class="product-overview__title">
+          <span class="chip chip--ghost">{{ product.category.name }}</span>
+          <h1 class="display-title">{{ product.name }}</h1>
+          {% if product.short_description %}
+            <p class="lead">{{ product.short_description }}</p>
+          {% endif %}
         </div>
-      {% endif %}
-      
-      <!-- Add to Cart -->
-      <div class="pt-4">
-        {% if product.in_stock %}
-          <button class="w-full gradient-gold text-white py-4 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-medium text-lg"
-                  data-add-to-cart
-                  data-product-slug="{{ product.slug }}"
-                  data-product-id="{{ product.id }}"
-                  data-product-name="{{ product.name }}"
-                  data-product-price="{{ product.price_display }}"
-                  data-product-price-cents="{{ product.price_cents }}"
-                  data-product-material="{{ product.get_material_display }}"
-                  data-product-carat="{{ product.carat }}"
-                  data-product-short-description="{{ product.short_description }}">
-            <span class="flex items-center justify-center">
-              <span class="flex-shrink-0 mr-2">{% hgi_stroke name="shopping-bag-02" size="20" color="#ffffff" stroke_width="2" %}</span>
-              <span>Add to Cart</span>
-            </span>
-          </button>
-        {% else %}
-          <div class="w-full bg-gray-100 text-gray-500 py-4 rounded-lg text-center font-medium">
-            Out of Stock
+
+        <div class="price-block">
+          <span>{{ product.price_display }}</span>
+          {% if product.compare_price_display %}
+            <small>Was {{ product.compare_price_display }}</small>
+          {% endif %}
+        </div>
+
+        <div class="product-meta">
+          <span>Material: {{ product.get_material_display }}</span>
+          {% if product.carat %}<span>Carat: {{ product.carat }}</span>{% endif %}
+          {% if product.stone_type %}<span>Stone: {{ product.stone_type }}</span>{% endif %}
+          {% if product.size %}<span>Size: {{ product.size }}</span>{% endif %}
+          <span>SKU: {{ product.sku }}</span>
+        </div>
+
+        <div class="hero__actions">
+          {% if product.in_stock %}
+            <a href="{% url 'cart:add' product.slug %}" class="btn btn--primary">
+              <span>Add to cart</span>
+            </a>
+          {% else %}
+            <span class="chip chip--ghost">Made to order</span>
+          {% endif %}
+          <a href="mailto:hello@tacaccessories.com" class="btn btn--ghost">
+            <span>Enquire</span>
+          </a>
+        </div>
+
+        <div class="product-sections">
+          {% if product.description %}
+            <div class="product-section">
+              <h3>Story &amp; craft</h3>
+              <p>{{ product.description }}</p>
+            </div>
+          {% endif %}
+          <div class="product-section">
+            <h3>Shipping &amp; care</h3>
+            <p>Complimentary delivery within Kenya. Enjoy lifetime cleaning and complimentary adjustments for TAC pieces.</p>
           </div>
-        {% endif %}
+        </div>
+
+        <div class="surface surface--muted community-card">
+          <i class="ph ph-hands-clapping"></i>
+          <div>
+            <strong>Community crafted</strong>
+            <p>Each TAC purchase supports our artisan partners with fair wages, training, and sustainable sourcing.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+{% if related_products %}
+  <section class="section" aria-labelledby="related-title">
+    <div class="container">
+      <div class="section__intro">
+        <span class="eyebrow">You may also like</span>
+        <h2 class="display-title" id="related-title">Complementary pieces</h2>
+        <p class="lead">Mix, match, and layer with other items from the {{ product.category.name|lower }} family.</p>
+      </div>
+      <div class="card-grid card-grid--three">
+        {% for related in related_products %}
+          <article class="product-card">
+            <a class="product-card__link" href="{% url 'catalog:product_detail' related.slug %}">
+              <div class="product-card__media">
+                {% if related.primary_image %}
+                  <img class="product-card__image" src="{{ related.primary_image }}" alt="{{ related.name }}">
+                {% else %}
+                  <img class="product-card__image" src="https://images.unsplash.com/photo-1516637090014-cb1ab0d08fc7?auto=format&fit=crop&w=900&q=80" alt="{{ related.name }}">
+                {% endif %}
+                <div class="product-card__badges">
+                  <span class="badge">{{ related.category.name }}</span>
+                </div>
+              </div>
+              <div class="product-card__content">
+                <h3 class="product-card__title line-clamp-2">{{ related.name }}</h3>
+                {% if related.short_description %}<p class="line-clamp-2">{{ related.short_description }}</p>{% endif %}
+                <div class="product-card__price">
+                  <span>{{ related.price_display }}</span>
+                  {% if related.compare_price_display %}<del>{{ related.compare_price_display }}</del>{% endif %}
+                </div>
+                <span class="product-card__cta">View details</span>
+              </div>
+            </a>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
 {% endblock %}

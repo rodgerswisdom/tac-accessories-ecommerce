@@ -3,6 +3,14 @@ from django.utils.text import slugify
 import uuid
 from decimal import Decimal
 
+DEFAULT_PRODUCT_IMAGES = {
+    "rings": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=900&q=80",
+    "necklaces": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    "bracelets": "https://images.unsplash.com/photo-1518544801976-3e159e06faa9?auto=format&fit=crop&w=900&q=80",
+    "earrings": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
+    "default": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
+}
+
 class Tag(models.Model):
     """Tags for jewellery items (e.g., gold, silver, diamond, etc.)"""
     name = models.CharField(max_length=50, unique=True)
@@ -187,7 +195,12 @@ class Product(models.Model):
         first_gallery_image = self.gallery_images.first()
         if first_gallery_image:
             return first_gallery_image.image.url
-        return None
+        category_slug = self.category.slug if self.category else None
+        if category_slug:
+            placeholder = DEFAULT_PRODUCT_IMAGES.get(category_slug)
+            if placeholder:
+                return placeholder
+        return DEFAULT_PRODUCT_IMAGES["default"]
 
     def get_gallery_images(self):
         """Get all gallery images ordered by sort_order"""
