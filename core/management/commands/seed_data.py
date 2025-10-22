@@ -175,22 +175,34 @@ class Command(BaseCommand):
     def _create_categories(self):
         category_specs = [
             {
-                "name": "Rings",
-                "description": "Engagement, wedding, and fashion rings",
-                "gender": "unisex",
+                "name": "Earrings",
+                "description": "Studs, drops and climbers handcrafted in community ateliers",
+                "gender": "women",
                 "sort_order": 1,
             },
             {
-                "name": "Necklaces",
-                "description": "Necklaces and pendants",
-                "gender": "women",
+                "name": "Rings",
+                "description": "Engagement, wedding and fashion rings",
+                "gender": "unisex",
                 "sort_order": 2,
             },
             {
-                "name": "Bracelets",
-                "description": "Bracelets and bangles",
-                "gender": "unisex",
+                "name": "Necklaces",
+                "description": "Layer-ready chains and pendants",
+                "gender": "women",
                 "sort_order": 3,
+            },
+            {
+                "name": "Bracelets",
+                "description": "Stackable bracelets and bangles",
+                "gender": "unisex",
+                "sort_order": 4,
+            },
+            {
+                "name": "Hair Accessories",
+                "description": "Beaded crowns and statement hair adornments",
+                "gender": "women",
+                "sort_order": 5,
             },
         ]
 

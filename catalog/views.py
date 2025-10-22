@@ -11,36 +11,192 @@ import os
 from .models import Product, Category, Tag, ProductImage
 from .forms import ProductForm
 
+
+DIVISION_OPTIONS = [
+    {"key": "earrings", "label": "Earrings", "category_slug": "earrings"},
+    {"key": "necklaces", "label": "Necklaces & Chains", "category_slug": "necklaces"},
+    {"key": "bracelets", "label": "Bracelets & Bangles", "category_slug": "bracelets"},
+    {"key": "rings", "label": "Rings", "category_slug": "rings"},
+    {"key": "hair", "label": "Hair Accessories", "category_slug": None},
+]
+
+SORT_OPTIONS = [
+    {"key": "newest", "label": "Newest"},
+    {"key": "price_low", "label": "Price · Low to High"},
+    {"key": "price_high", "label": "Price · High to Low"},
+    {"key": "name", "label": "Name A–Z"},
+    {"key": "featured", "label": "Featured"},
+    {"key": "popular", "label": "Bestsellers"},
+]
+
+SORT_ORDER_MAP = {
+    "newest": "-created_at",
+    "price_low": "price_cents",
+    "price_high": "-price_cents",
+    "name": "name",
+    "featured": "-is_featured",
+    "popular": "-is_bestseller",
+}
+
+AVAILABILITY_OPTIONS = [
+    {"key": "in_stock", "label": "Ready to ship"},
+    {"key": "made_to_order", "label": "Made to order"},
+]
+
+
+def _apply_product_filters(request, queryset, division_map):
+    state = {}
+
+    query = request.GET.get("q", "").strip()
+    if query:
+        queryset = queryset.filter(
+            Q(name__icontains=query)
+            | Q(short_description__icontains=query)
+            | Q(description__icontains=query)
+            | Q(category__name__icontains=query)
+        )
+        state["q"] = query
+
+    division = request.GET.get("division")
+    if division:
+        state["division"] = division
+        category_slug = division_map.get(division)
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        else:
+            queryset = queryset.none()
+
+    material = request.GET.get("material")
+    if material:
+        valid_materials = {choice[0] for choice in Product.MATERIAL_CHOICES}
+        if material in valid_materials:
+            queryset = queryset.filter(material=material)
+            state["material"] = material
+
+    tag_slug = request.GET.get("tag")
+    if tag_slug:
+        queryset = queryset.filter(tags__slug=tag_slug)
+        state["tag"] = tag_slug
+
+    availability = request.GET.get("availability")
+    if availability:
+        state["availability"] = availability
+        if availability == "in_stock":
+            queryset = queryset.filter(stock_quantity__gt=0)
+        elif availability == "made_to_order":
+            queryset = queryset.filter(Q(track_inventory=False) | Q(stock_quantity__lte=0))
+
+    price_min = request.GET.get("price_min")
+    if price_min:
+        try:
+            state["price_min"] = int(price_min)
+            queryset = queryset.filter(price_cents__gte=int(price_min) * 100)
+        except ValueError:
+            pass
+
+    price_max = request.GET.get("price_max")
+    if price_max:
+        try:
+            state["price_max"] = int(price_max)
+            queryset = queryset.filter(price_cents__lte=int(price_max) * 100)
+        except ValueError:
+            pass
+
+    sort_key = request.GET.get("sort", "newest")
+    state["sort"] = sort_key if sort_key in SORT_ORDER_MAP else "newest"
+    queryset = queryset.order_by(SORT_ORDER_MAP[state["sort"]])
+
+    return queryset, state
+
+
 def product_list(request, slug=None):
-    qs = Product.objects.select_related("category")
-    category = None
+    division_map = {cfg["key"]: cfg["category_slug"] for cfg in DIVISION_OPTIONS}
+    categories = Category.objects.filter(is_active=True, parent__isnull=True).order_by("sort_order", "name")
+    active_category = None
+
+    products = (
+        Product.objects.filter(is_active=True)
+        .select_related("category")
+        .prefetch_related("tags")
+    )
+
     if slug:
-        category = get_object_or_404(Category, slug=slug)
-        qs = qs.filter(category=category)
-    q = request.GET.get("q", "").strip()
-    if q:
-        qs = qs.filter(Q(name__icontains=q) | Q(category__name__icontains=q))
-    
-    # Handle sorting
-    sort = request.GET.get("sort", "created_at")
-    if sort:
-        qs = qs.order_by(sort)
-    
-    ctx = {"products": qs, "active_category": category, "categories": Category.objects.all()}
+        active_category = get_object_or_404(Category, slug=slug)
+        products = products.filter(category=active_category)
+
+    products, filter_state = _apply_product_filters(request, products, division_map)
+
+    division_options = [
+        {
+            **option,
+            "available": option["category_slug"]
+            and categories.filter(slug=option["category_slug"]).exists(),
+        }
+        for option in DIVISION_OPTIONS
+    ]
+
+    division_notice = None
+    division_key = filter_state.get("division")
+    if division_key:
+        for option in division_options:
+            if option["key"] == division_key and not option["available"]:
+                division_notice = "We are curating this collection. Book a bespoke consultation to create your set ahead of launch."
+                break
+
+    active_filters = {k: v for k, v in filter_state.items() if k not in {"sort"}}
+
+    context = {
+        "products": products,
+        "active_category": active_category,
+        "categories": categories,
+        "division_options": division_options,
+        "material_options": Product.MATERIAL_CHOICES,
+        "tag_options": Tag.objects.filter(is_active=True).order_by("name"),
+        "availability_options": AVAILABILITY_OPTIONS,
+        "sort_options": SORT_OPTIONS,
+        "filter_state": filter_state,
+        "total_count": products.count(),
+        "division_notice": division_notice,
+        "active_filters": active_filters,
+    }
+
     if request.headers.get("HX-Request"):
-        return render(request, "catalog/_product_grid.html", ctx)
-    return render(request, "catalog/product_list.html", ctx)
+        return render(request, "catalog/_product_grid.html", context)
+    return render(request, "catalog/product_list.html", context)
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug)
-    return render(request, "catalog/product_detail.html", {"product": product})
+    product = get_object_or_404(
+        Product.objects.select_related("category").prefetch_related("tags", "gallery_images"),
+        slug=slug,
+    )
+    related_products = (
+        Product.objects.filter(is_active=True, category=product.category)
+        .exclude(pk=product.pk)
+        .select_related("category")
+        [:4]
+    )
+    return render(
+        request,
+        "catalog/product_detail.html",
+        {
+            "product": product,
+            "related_products": related_products,
+        },
+    )
 
 def product_search(request):
-    q = request.GET.get("q", "").strip()
-    qs = Product.objects.select_related("category")
-    if q:
-        qs = qs.filter(Q(name__icontains=q) | Q(category__name__icontains=q))
-    return render(request, "catalog/_product_grid.html", {"products": qs, "categories": Category.objects.all()})
+    division_map = {cfg["key"]: cfg["category_slug"] for cfg in DIVISION_OPTIONS}
+    products = (
+        Product.objects.filter(is_active=True)
+        .select_related("category")
+        .prefetch_related("tags")
+    )
+    products, filter_state = _apply_product_filters(request, products, division_map)
+    context = {
+        "products": products,
+        "filter_state": filter_state,
+    }
+    return render(request, "catalog/_product_grid.html", context)
 
 def product_create(request):
     """Create a new product with step-by-step validation"""

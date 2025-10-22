@@ -1,7 +1,15 @@
 {% if messages %}
-  <div class="space-y-2 mb-4">
-    {% for message in messages %}
-      <div class="p-3 rounded border {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
+  <div class="container">
+    <div class="flash-stack">
+      {% for message in messages %}
+        <div class="flash
+          {% if 'success' in message.tags %} flash--success
+          {% elif 'warning' in message.tags %} flash--warning
+          {% elif 'error' in message.tags %} flash--error
+          {% else %} flash--info{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
   </div>
 {% endif %}

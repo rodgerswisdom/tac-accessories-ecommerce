@@ -31,7 +31,7 @@ SECRET_KEY = env("SECRET_KEY", default="dev-only-unsafe")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "testserver"])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "testserver", "unclinical-unweighted-dotty.ngrok-free.app"])
 
 
 # Application definition
@@ -133,18 +133,28 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "core" / "static"]
 
+# Static files directories - check if they exist before adding to STATICFILES_DIRS
+STATICFILES_DIRS = []
+
+# Add core static directory if it exists
+core_static_dir = BASE_DIR / "core" / "static"
+if core_static_dir.exists():
+    STATICFILES_DIRS.append(core_static_dir)
+
+# For production deployments, you might need to add additional static directories
+# Uncomment and modify the following lines if needed for your server setup:
+if not DEBUG:
+    # Add production-specific static directories here
+    import os
+    production_static_dir = "/var/www/tac-accessories-ecommerce/core/static"
+    if os.path.exists(production_static_dir):
+        STATICFILES_DIRS.append(production_static_dir)
+
+# Use simple static files storage for development
 STORAGES = {
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}
 }
-
-# Use simpler static files storage for testing
-import sys
-if 'test' in sys.argv:
-    STORAGES = {
-        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}
-    }
 
 # Media files (User uploads)
 # https://docs.djangoproject.com/en/5.2/topics/files/

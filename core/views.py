@@ -14,10 +14,10 @@ def home(request):
     new_arrivals = products.order_by("-created_at")[:6]
 
     handcrafted_tag = Tag.objects.filter(slug="handcrafted").first()
-    matching_sets = (
-        products.filter(tags=handcrafted_tag) if handcrafted_tag else featured_products
-    )
-    matching_sets = matching_sets.distinct()[:4]
+    if handcrafted_tag:
+        matching_sets = products.filter(tags=handcrafted_tag).distinct()[:4]
+    else:
+        matching_sets = featured_products[:4]
 
     primary_categories = (
         Category.objects.filter(is_active=True, parent__isnull=True)
